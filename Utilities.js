@@ -26,15 +26,41 @@ var Utilities = (function () {
   function findTodaysDate(){
       var today = new Date().getDate();
     return today;
-}
+  }
 
+  function createGoogleMap(latitude,longitude,mapContainerId){
+        var map = new google.maps.Map(document.getElementById("mapTaskEntry"), {
+                                  zoom: 10,
+                                  center: new google.maps.LatLng(latitude,longitude),
+                                  mapTypeId: google.maps.MapTypeId.ROADMAP
+                                });
+        return map;
+  }
+
+  function createMapMarker(latitude,longitude,map){
+        var marker = new google.maps.Marker({
+                            position:{lat:latitude,lng:longitude},
+                            map: map,
+                            title: 'Your task is here!',
+                          }); 
+    }
+
+  function validateTaskEntry(taskText){
+    if (taskText===""){
+          return ('Hey, enter something before you leave - or press Cancel');   
+        }
+    return null;
+}
   
   return {
     getCurrentMonthNumber: getCurrentMonthNumber,
     getYearNumber:getYearNumber,
     getMonthName:getMonthName,
     getDatesInCurrentMonth:getDatesInCurrentMonth,
-    findTodaysDate:findTodaysDate
+    findTodaysDate:findTodaysDate,
+    createGoogleMap:createGoogleMap,
+    createMapMarker:createMapMarker,
+    validateTaskEntry:validateTaskEntry
   };
   
 })();

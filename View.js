@@ -71,6 +71,66 @@ var View = (function () {
       $divTop.append($pageHeader);
       parentElement.append($divTop);
     }
+    function clearTasksInSliderView(){
+      $('#textBox4').val('');
+    
+    }
+     function showPostcodeCoordinates(search){
+        var url=('http://api.postcodes.io/postcodes/'+ search);
+            console.log("url is...",url);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', encodeURI(url));
+            xhr.onload = function() {
+                if (xhr.status !== 200) {
+                    console.log('Not OK: ' + xhr.status);
+                     return;
+                }
+                var data = JSON.parse(xhr.responseText);
+                var latitudeReturnedFromLookup= data.result.latitude;
+                var longitudeReturnedFromLookup= data.result.longitude;
+            
+                var mapCreated = Utilities.createGoogleMap(latitudeReturnedFromLookup,longitudeReturnedFromLookup,'mapTaskEntry');
+                var markerCreated = Utilities.createMapMarker(latitudeReturnedFromLookup, longitudeReturnedFromLookup ,mapCreated); 
+                Model.setCoordsForLocation(locationsArray, dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
+                }
+            xhr.send();
+        }
+
+    function showMapView(){
+        $('#formDiv2').addClass("mapsurround2").removeClass("hidden");
+    }
+
+    function displayStarterMap(latitude,longitude){  //could use CreateGoogleMap instead
+        var mapOptions={ 
+            center:new google.maps.LatLng(latitude,longitude),
+            zoom:12   };
+
+        // var mylatlng = new google.maps.LatLng(latitude, longitude);
+        // console.log("mylatlng", mylatlng);
+        var map= new google.maps.Map(document.getElementById("mapView-mapdiv"),mapOptions);
+        var marker = new google.maps.Marker({
+                    position:{lat: latitude, lng: longitude},
+                    map: map,
+                    title: 'Your task is here!',
+                   });  
+  }
+  function setArrayValuesToTablePosition(daysToUse,parentElement){
+    var NUMBER_OF_COLUMNS = 7; 
+    var $cell;
+    var $tableRow;
+    
+    $.each(daysToUse, function(index) {
+        if(!(index % NUMBER_OF_COLUMNS)) {
+            $tableRow = $('<tr>');
+        }
+
+        $cell = $('<td>').html(daysToUse[index]);
+        $cell.addClass('active');
+        $tableRow.append($cell);
+        parentElement.append($tableRow); 
+    });       
+  }        
+
   
   return {
     changeFormToVisible: changeFormToVisible,
@@ -83,7 +143,12 @@ var View = (function () {
     displayTaskText:displayTaskText,
     setTodayHighlight:setTodayHighlight,
     setWeekdayLabelsToColumns:setWeekdayLabelsToColumns,
-    createPageHeader:createPageHeader
+    createPageHeader:createPageHeader,
+    clearTasksInSliderView:clearTasksInSliderView,
+    showPostcodeCoordinates:showPostcodeCoordinates,
+    showMapView:showMapView,
+    displayStarterMap:displayStarterMap,
+    setArrayValuesToTablePosition:setArrayValuesToTablePosition
   };
   
 })();

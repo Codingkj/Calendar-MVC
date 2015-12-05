@@ -10,7 +10,7 @@ var ViewForms = (function () {
     var $textField=$('<textarea id="taskWords" name="textFieldname"></textarea>');
     $textField.addClass("textbox");
     $taskForm.append($textField);
-    var $mapDiv1=$('<div id="map" class="mapStyle"></div>');
+    var $mapDiv1=$('<div id="mapTaskEntry" class="mapStyle"></div>');
     $taskForm.append($mapDiv1);
  
     var $findButton=$('<button id="findbutton" type="button">FIND</button>');

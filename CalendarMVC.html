@@ -3,12 +3,10 @@
 <head>
   <meta charset="utf-8">
   <title>KK Calendar</title>
-    
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="stylesheet.css">
 
   <script src="http://code.jquery.com/jquery-2.1.4.min.js"> </script>
-  <!--jQuery UI and style sheets next 4 lines.  -->
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="../../jquery-ui-1.11.4/jquery-ui.css">
   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
@@ -20,9 +18,6 @@
   <script src="Model.js"></script>
   <script src="Utilities.js"></script>
 
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZgE4487vDwz7ZksO5AAOMqFuuENHT_CY&signed_in=true"
-    //     async defer>
-</script> -->
 </head>
 <body>
 
@@ -31,94 +26,7 @@
   <script>
 
 
-
-function setBlanksAtStartOfMonth(currentMonthName,startCell){    
-    var cellsThatCanHaveDates=$('datecell'); 
-    
-    var daysToUse=[];
-
-    for (var counter=0;counter<startCell-1;counter++){
-        cellsThatCanHaveDates[counter]="";
-        daysToUse.push(cellsThatCanHaveDates[counter]);
-    }
-    return daysToUse;
-}
-
-function setNumbersToArray(currentMonthName,daysToUse,numDaysInMonth,startCell){
-   
-    var dayInTheMonthLabel=1;
-    var cellsThatCanHaveDates=$('datecell'); 
-
-    for (var counter = startCell-1; counter < numDaysInMonth + startCell-1; counter++){
-        cellsThatCanHaveDates[counter]=dayInTheMonthLabel;
-        dayInTheMonthLabel=dayInTheMonthLabel+1;
-        daysToUse.push(cellsThatCanHaveDates[counter].toString());
-    } 
-    return daysToUse;
-} 
-
-
-function setArrayValuesToTablePosition(daysToUse){
-    var NUMBER_OF_COLUMNS = 7; 
-    var $cell;
-    var $tableRow;
-    
-    $.each(daysToUse, function(index) {
-        if(!(index % NUMBER_OF_COLUMNS)) {
-            $tableRow = $('<tr>');
-        }
-
-        $cell = $('<td>').html(daysToUse[index]);
-        $cell.addClass('active');
-        $tableRow.append($cell);
-
-        $('#grid').append($tableRow); 
-    });       
-}        
-
-function getTodaysCellOnCalendar(){
-    var $alldates = $('.active');
-    for (var counter=0; counter < $alldates.length;counter++){
-        if ($alldates[counter].innerHTML == today){
-            var selectedDate = $alldates[counter];
-          return selectedDate;
-        }
-    }
-}
-
-function validateTaskEntry(taskText){
-    if (taskText===""){
-          return ('Hey, enter something before you save - or press Cancel');   
-        }
-    return null;
-}
-
-function clearTaskText(){
-    $('#taskWords').val('');           //empty the textbox  
-     dateSelected = "";              // change the dateSelected back to nothing
-}
-
-function clearTasksInSliderView(){
-    $('#textBox4').val('');
-    
-}
-function displayStarterMap(latitude,longitude){
-        var mapOptions={ 
-            center:new google.maps.LatLng(latitude,longitude),
-            zoom:12   };
-
-        // var mylatlng = new google.maps.LatLng(latitude, longitude);
-        // console.log("mylatlng", mylatlng);
-        var map= new google.maps.Map(document.getElementById("mapView-mapdiv"),mapOptions);
-        var marker = new google.maps.Marker({
-                    position:{lat: latitude, lng: longitude},
-                    map: map,
-                    title: 'Your task is here!',
-                   });  
-}
-
-
-$(function Controller(){  
+$(function controllerSupremo(){  
     var dateSelected = "";  
     var $bodyElement = $('body');
     var $gridElement = $('#grid');
@@ -133,21 +41,18 @@ $(function Controller(){
     var $dayHeaderCells = Model.getWeekdayCells();
     var $weekdayLabels = Model.getWeekdayLabels();
 
-    console.log("MVC 1st daynames are",$dayHeaderCells);
-    console.log("MVC says labels are",$weekdayLabels);
     View.setWeekdayLabelsToColumns($dayHeaderCells, $weekdayLabels);
     var numDaysInMonth = Utilities.getDatesInCurrentMonth(currentYearNumber,currentMonthNumber);
-    var locationsArray= new Array(numDaysInMonth);
+    var locationsArray= [];
     var taskEntryArray = Model.initialiseTaskStorageArray(numDaysInMonth);
     Model.initialiseLocationsStorageArray(locationsArray);
     
     var startCell = new Date(currentMonthName+' 1, 2015 00:00:00').getDay();
-    var daysToUse = setBlanksAtStartOfMonth(currentMonthName,startCell); 
-    var daysToUseWithBlanksAdded = setNumbersToArray(currentMonthName,daysToUse,numDaysInMonth,startCell);   
-    setArrayValuesToTablePosition(daysToUseWithBlanksAdded);   
+    var daysToUse = Model.setBlanksAtStartOfMonth(currentMonthName,startCell); 
+    var daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth(currentMonthName,daysToUse,numDaysInMonth,startCell);   
+    View.setArrayValuesToTablePosition(daysToUseWithBlanksAdded,$gridElement);   
     
     var dateToHighlight = Utilities.findTodaysDate(); 
-    console.log("date to highlight",dateToHighlight);
     var calendarCell = Model.getTodayCell(dateToHighlight);  
     View.setTodayHighlight(dateToHighlight,calendarCell);
     ViewForms.createTaskEntryForm($bodyElement);
@@ -165,15 +70,17 @@ $(function Controller(){
     $('#editbutton').on('click',{},ViewEvents.showEditForm);
     $('#removebutton').on('click',{},ViewEvents.removeTask); 
     $('#gobackbutton').on('click',{},ViewEvents.returnToCalendarScreen);
+    $( "#findbutton" ).on('click',{},ViewEvents.findPostcode);
 
 
     $("#mapViewButton").click(function () {   // to display all tasks on 1 map
         event.preventDefault(); 
         event.stopPropagation();
         console.log("got here too!!!!");
-        $('#formDiv2').addClass("mapsurround2").removeClass("hidden");
+        View.showMapView;
+        View.displayStarterMap;
       
-        $ (function() {
+        $ (function createSlider()  {
         
         $("#slider-range").slider({
           range: true,
@@ -182,30 +89,23 @@ $(function Controller(){
           values:[1,20], 
           step:1,
       
-            slide: function( event, ui ) {
-
+            slide: function onSliderMove( event, ui ) {
                       $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
                    },
             start: function( event, ui ) {
                       $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
                    },
-            stop: function( event, ui ) {
-                    clearTasksInSliderView();
-                    $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
-                        
-                        var map = new google.maps.Map(document.getElementById('mapView-mapdiv'), {
-                                  zoom: 10,
-                                  center: new google.maps.LatLng(latitudeReturnedFromLookup,longitudeReturnedFromLookup),
-                                  mapTypeId: google.maps.MapTypeId.ROADMAP
-                                });
+            stop: function onSliderStop( event, ui ) {
+                    View.clearTasksInSliderView();
 
-                        var counter=ui.values[0];
+                    $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
+                      
                         var marker; 
                         var i;
                         var tkCount=0;
                         var infowindow = new google.maps.InfoWindow();
                                     
-                        for (iterator=ui.values[0];iterator<ui.values[1]; iterator++){
+                        for (var iterator=ui.values[0];iterator<ui.values[1]; iterator++){
                             if (taskEntries[iterator]!==""){
                                 tkCount=tkCount+1;
                             }
@@ -215,7 +115,7 @@ $(function Controller(){
                         $taskCount=$('<p>There are '+ tkCount +' tasks in this range:</p>');
                         $taskDiv.append($taskCount);
 
-                        for (iterator=counter;iterator<ui.values[1]; iterator++){
+                        for (var iterator=ui.values[0];iterator<ui.values[1]; iterator++){
                             marker = new google.maps.Marker({
                                 position: new google.maps.LatLng(locationsArray[iterator][0], locationsArray[iterator][1]),
                                 map: map
@@ -247,53 +147,6 @@ $(function Controller(){
       });  //end of  slider functionality function call
     });  //end of mapView
 
-
-
-      
-
-
-    $( "#findbutton" ).click(function(){
-            event.preventDefault(); 
-            event.stopPropagation();  
-            var dateSelected=event.target.textContent;   
-            var search=$('#postcode').val();
-            // var characterReg = /([a-zA-Z0-9])/; 
-            // if(!characterReg.test(search)) {
-            //     $(this).after('<span class="error-text">Between 4 - 6 characters please.</span>');
-            // }
-            var url=('http://api.postcodes.io/postcodes/'+ search);
-            console.log("url is...",url);
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', encodeURI(url));
-            xhr.onload = function() {
-                if (xhr.status !== 200) {
-                    console.log('Not OK: ' + xhr.status);
-                     return;
-                }
-                var data = JSON.parse(xhr.responseText);
-          
-                latitudeReturnedFromLookup= data.result.latitude;
-                longitudeReturnedFromLookup= data.result.longitude;
-                
-                var mapOptions={ 
-                center:new google.maps.LatLng(latitudeReturnedFromLookup,longitudeReturnedFromLookup),
-                zoom:12   };
-
-                // var mylatlng = new google.maps.LatLng(latitudeReturnedFromLookup, longitudeReturnedFromLookup);
-                // console.log("mylatlng", mylatlng);
-                var map= new google.maps.Map(document.getElementById("map"),mapOptions);
-                var marker = new google.maps.Marker({
-                            position:{lat: latitudeReturnedFromLookup, lng: longitudeReturnedFromLookup},
-                            map: map,
-                            title: 'Your task is here!',
-                          });    
-                
-                Model.setCoordsForLocation(locationsArray, dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
-                
-               
-            };
-            xhr.send();
-          });
 
 });
 

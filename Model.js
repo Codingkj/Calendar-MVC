@@ -13,8 +13,7 @@ var Model = (function () {
   
   function initialiseLocationsStorageArray(locationsArray,numDaysInMonth){     
      for (var counter = 0; counter < numDaysInMonth; counter++) {
-          locationsArray[counter] = new Array(2);
-          locationsArray[counter]=[];
+          locationsArray[counter] = [,];
         }    
   }
 
@@ -71,10 +70,50 @@ var Model = (function () {
    }
 
   function getTodayCell(todaysDate){
-     var allCells = document.getElementsByClassName("active");
+     var allCells = document.getElementsByClassName("datecell");
       // var $allCells = $('.active');
+      console.log(allCells);
       var todayCell = allCells[todaysDate];
   return todayCell;
+  }
+
+  function setBlanksAtStartOfMonth(currentMonthName,startCell){    
+    var cellsThatCanHaveDates=$('datecell');    
+    var daysToUse=[];
+
+    for (var counter=0;counter<startCell-1;counter++){
+        cellsThatCanHaveDates[counter]="";
+        daysToUse.push(cellsThatCanHaveDates[counter]);
+    }
+    return daysToUse;
+  }
+
+  function setNumbersToRestOfMonth(currentMonthName,daysToUse,numDaysInMonth,startCell){
+   
+    var dayInTheMonthLabel=1;
+    var cellsThatCanHaveDates=$('datecell'); 
+
+    for (var counter = startCell-1; counter < numDaysInMonth + startCell-1; counter++){
+        cellsThatCanHaveDates[counter]=dayInTheMonthLabel;
+        dayInTheMonthLabel=dayInTheMonthLabel+1;
+        daysToUse.push(cellsThatCanHaveDates[counter].toString());
+    } 
+    return daysToUse;
+  } 
+
+  function clearTaskText(){
+    $('#taskWords').val('');           //empty the textbox  
+                  
+  }
+
+  function getTodaysCellOnCalendar(){
+    var $alldates = $('.active');
+    for (var counter=0; counter < $alldates.length;counter++){
+        if ($alldates[counter].innerHTML == today){
+            var selectedDate = $alldates[counter];
+          return selectedDate;
+        }
+    }
   }
 
 
@@ -89,7 +128,11 @@ var Model = (function () {
     getExistingTask:getExistingTask,
     setTask:setTask,
     createWeekdayLabelCells:createWeekdayLabelCells,
-    getTodayCell:getTodayCell
+    getTodayCell:getTodayCell,
+    setBlanksAtStartOfMonth:setBlanksAtStartOfMonth,
+    setNumbersToRestOfMonth:setNumbersToRestOfMonth,
+    clearTaskText:clearTaskText,
+    getTodaysCellOnCalendar:getTodaysCellOnCalendar
 
   };
   

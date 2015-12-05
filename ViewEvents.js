@@ -25,7 +25,7 @@ var ViewEvents = (function () {
         event.stopPropagation();
         
         var textEntered=$('textarea').val(); 
-        validateTaskEntry(textEntered);
+        Utilities.validateTaskEntry(textEntered);
         var dateSelected=event.target.textContent;
         Model.storeTaskEntry(textEntered,dateSelected);
         View.highlightDate(dateSelected);    
@@ -73,6 +73,13 @@ var ViewEvents = (function () {
                                     
             $('#formDiv2').addClass("hidden").removeClass("mapsurround2");
             View.clearTasksInSliderView();                             
+      }
+      function findPostcode(){
+            event.preventDefault(); 
+            event.stopPropagation();  
+            var dateSelected=event.target.textContent;   
+            var search=$('#postcode').val();
+            var returnedCoordinates = View.showPostcodeCoordinates(search);        
       }
   
   return {
