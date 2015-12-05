@@ -191,6 +191,11 @@
   top: 15vw;
   left: 2vw; }
 
+#formdiv2 {
+  width: 70vw;
+  background-color: #A1D490;
+  height: 40vw; }
+
 #slider-range {
   background-color: orange;
   width: 30vw;
@@ -202,7 +207,7 @@
   background-color: #ffcce6;
   height: 30vw; }
 
-#formDiv2 {
+#mapDiv1 {
   width: 70vw;
   background-color: #A1D490;
   height: 40vw; }
@@ -221,14 +226,14 @@
   background-color: orange;
   width: 60%; }
 
-.sliderstyle {
+.sliderStyle {
   border: 1px;
   border-style: solid;
   border-color: black;
   color: black;
   width: 16vw; }
 
-.mapstyle {
+.mapStyle {
   background-color: yellow;
   height: 20vw;
   width: 20vw;
@@ -237,7 +242,7 @@
   top: -15vw;
   left: 8vw; }
 
-.mapstyle2 {
+.mapStyle2 {
   background-color: yellow;
   height: 30vw;
   width: 35vw;
