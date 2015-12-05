@@ -50,10 +50,14 @@ var View = (function () {
       $('#storedTextId').text(taskText);
     }
 
-    function setTodayHighlight(selectedDate,calendarCell){
-      console.log("Date is...",selectedDate);
-      console.log("calendarCell",calendarCell);
-      calendarCell.setAttribute("class","todaysdate");   
+    function setTodayHighlight(DateToHighlight){
+      var alldates = document.getElementsByClassName("active");
+      for (var counter=0; counter < alldates.length;counter++){
+        if (alldates[counter].innerHTML == DateToHighlight){
+          var selectedDate = alldates[counter];
+          selectedDate.setAttribute("class","todaysdate");
+        }  
+      }
     }
 
     function setWeekdayLabelsToColumns(headerCells,day_names){
@@ -75,7 +79,7 @@ var View = (function () {
       $('#textBox4').val('');
     
     }
-     function showPostcodeCoordinates(search){
+    function showPostcodeCoordinates(search,dateSelected){
         var url=('http://api.postcodes.io/postcodes/'+ search);
             console.log("url is...",url);
             var xhr = new XMLHttpRequest();
@@ -88,12 +92,14 @@ var View = (function () {
                 var data = JSON.parse(xhr.responseText);
                 var latitudeReturnedFromLookup= data.result.latitude;
                 var longitudeReturnedFromLookup= data.result.longitude;
-            
+                console.log('values are date,lat,lng',dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
                 var mapCreated = Utilities.createGoogleMap(latitudeReturnedFromLookup,longitudeReturnedFromLookup,'mapTaskEntry');
                 var markerCreated = Utilities.createMapMarker(latitudeReturnedFromLookup, longitudeReturnedFromLookup ,mapCreated); 
-                Model.setCoordsForLocation(locationsArray, dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
+                Model.storeCoordsForLocation(dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
+
                 }
             xhr.send();
+            return {};
         }
 
     function showMapView(){
@@ -109,27 +115,24 @@ var View = (function () {
         // console.log("mylatlng", mylatlng);
         var map= new google.maps.Map(document.getElementById("mapView-mapdiv"),mapOptions);
         var marker = new google.maps.Marker({
-                    position:{lat: latitude, lng: longitude},
+                    position:{lat: longitude, lng: longitude},
                     map: map,
                     title: 'Your task is here!',
                    });  
   }
-  function setArrayValuesToTablePosition(daysToUse,parentElement){
-    var NUMBER_OF_COLUMNS = 7; 
-    var $cell;
-    var $tableRow;
-    
-    $.each(daysToUse, function(index) {
-        if(!(index % NUMBER_OF_COLUMNS)) {
-            $tableRow = $('<tr>');
-        }
 
-        $cell = $('<td>').html(daysToUse[index]);
-        $cell.addClass('active');
-        $tableRow.append($cell);
-        parentElement.append($tableRow); 
-    });       
-  }        
+  function setArrayValuesToTablePosition(daysToUse){
+    var NUMBER_OF_COLUMNS = 7; 
+    
+      $.each(daysToUse, function(index) {
+          if(!(index%NUMBER_OF_COLUMNS)) tableRow = $('<tr>');
+
+          cell = $('<td>').html(daysToUse[index]);
+          cell.addClass('active');
+          $('#grid').append(tableRow.append(cell)); 
+      });   
+
+    }        
 
   
   return {

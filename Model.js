@@ -3,6 +3,7 @@ var Model = (function () {
   var DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']; 
   var NUMBER_OF_COLUMNS=7;
   var taskEntries = {};
+  var locationsArray = [];
 
   function initialiseTaskStorageArray(numDaysInMonth){  
     for (var counter = 0; counter < numDaysInMonth; counter++){
@@ -11,13 +12,13 @@ var Model = (function () {
     return taskEntries;
     }
   
-  function initialiseLocationsStorageArray(locationsArray,numDaysInMonth){     
+  function initialiseLocationsStorageArray(numDaysInMonth){     
      for (var counter = 0; counter < numDaysInMonth; counter++) {
           locationsArray[counter] = [,];
         }    
   }
 
-  function setCoordsForLocation(locationsArray,date,latitude,longitude){
+  function storeCoordsForLocation(date,latitude,longitude){
     locationsArray[date]=[latitude,longitude];
   }
 
@@ -47,6 +48,12 @@ var Model = (function () {
     return taskEntries[dateSelected];
   }
 
+  function getExistingLocation(dateSelected){
+    var coords = {lat:locationsArray[dateSelected][0],
+                  lng:locationsArray[dateSelected][1]}
+    return coords;
+  }
+
   function createWeekdayLabelCells(gridElement){
 
     // var $tableRow = $('<tr>');
@@ -69,13 +76,14 @@ var Model = (function () {
       });
    }
 
-  function getTodayCell(todaysDate){
-     var allCells = document.getElementsByClassName("datecell");
-      // var $allCells = $('.active');
-      console.log(allCells);
-      var todayCell = allCells[todaysDate];
-  return todayCell;
-  }
+  // function getTodayCell(todaysDate,alldates){
+  //    // var allCells = $('datecell');
+  //     // var $allCells = $('.active');
+  //     console.log("all cells are",alldates);
+  //     var todayCell = alldates[todaysDate];
+  //     console.log("today cell is",todayCell);
+  // return todayCell;
+  // }
 
   function setBlanksAtStartOfMonth(currentMonthName,startCell){    
     var cellsThatCanHaveDates=$('datecell');    
@@ -95,6 +103,7 @@ var Model = (function () {
 
     for (var counter = startCell-1; counter < numDaysInMonth + startCell-1; counter++){
         cellsThatCanHaveDates[counter]=dayInTheMonthLabel;
+
         dayInTheMonthLabel=dayInTheMonthLabel+1;
         daysToUse.push(cellsThatCanHaveDates[counter].toString());
     } 
@@ -116,11 +125,21 @@ var Model = (function () {
     }
   }
 
+  function getNumberOfTasksInRange(startDate, endDate){
+    var tkCount=0;
+    for (var iterator=startDate;iterator<endDate+1; iterator++){
+              if (taskEntries[iterator]!==""){
+                        tkCount=tkCount+1;
+              }
+          }
+        return tkCount;
+  }
+
 
   return {
     initialiseTaskStorageArray: initialiseTaskStorageArray,
     initialiseLocationsStorageArray:initialiseLocationsStorageArray,
-    setCoordsForLocation:setCoordsForLocation,
+    storeCoordsForLocation:storeCoordsForLocation,
     storeTaskEntry:storeTaskEntry,
     getColumns:getColumns,
     getWeekdayLabels:getWeekdayLabels,
@@ -128,12 +147,13 @@ var Model = (function () {
     getExistingTask:getExistingTask,
     setTask:setTask,
     createWeekdayLabelCells:createWeekdayLabelCells,
-    getTodayCell:getTodayCell,
+    // getTodayCell:getTodayCell,
     setBlanksAtStartOfMonth:setBlanksAtStartOfMonth,
     setNumbersToRestOfMonth:setNumbersToRestOfMonth,
     clearTaskText:clearTaskText,
-    getTodaysCellOnCalendar:getTodaysCellOnCalendar
-
+    getTodaysCellOnCalendar:getTodaysCellOnCalendar,
+    getNumberOfTasksInRange:getNumberOfTasksInRange,
+    getExistingLocation:getExistingLocation
   };
   
 })();

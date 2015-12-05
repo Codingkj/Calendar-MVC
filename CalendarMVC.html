@@ -27,7 +27,7 @@
 
 
 $(function controllerSupremo(){  
-    var dateSelected = "";  
+    var $dateSelected = "";  
     var $bodyElement = $('body');
     var $gridElement = $('#grid');
     var currentMonthNumber = Utilities.getCurrentMonthNumber();
@@ -50,35 +50,34 @@ $(function controllerSupremo(){
     var startCell = new Date(currentMonthName+' 1, 2015 00:00:00').getDay();
     var daysToUse = Model.setBlanksAtStartOfMonth(currentMonthName,startCell); 
     var daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth(currentMonthName,daysToUse,numDaysInMonth,startCell);   
-    View.setArrayValuesToTablePosition(daysToUseWithBlanksAdded,$gridElement);   
+    var allCellsForDates = View.setArrayValuesToTablePosition(daysToUseWithBlanksAdded);   
     
-    var dateToHighlight = Utilities.findTodaysDate(); 
-    var calendarCell = Model.getTodayCell(dateToHighlight);  
-    View.setTodayHighlight(dateToHighlight,calendarCell);
+    var dateToHighlight = Utilities.findTodaysDate();    
+    View.setTodayHighlight(dateToHighlight);
+
     ViewForms.createTaskEntryForm($bodyElement);
     ViewForms.createTaskEditForm($bodyElement);
     ViewForms.createMapView($bodyElement);
   //  addMarksToSlider();
   
-// $( "button" ).on( "click", {  name: "Karl"}, greet );
 
-    $('.todaysdate').on('click',{},ViewEvents.showClickedOnDate);
-    $('.active').on('click',{},ViewEvents.showClickedOnDate);
+    $dateSelected=$('.todaysdate').on('click',{},ViewEvents.showClickedOnDate);
+    $dateSelected=$('.active').on('click',{},ViewEvents.showClickedOnDate);
     $('#submitbutton').on('click',{},ViewEvents.saveTaskEntry);
     $('#cancelbutton').on('click',{},ViewEvents.cancelTaskEntry);
     $('#closebutton').on('click',{},ViewEvents.closeEditForm);  
     $('#editbutton').on('click',{},ViewEvents.showEditForm);
     $('#removebutton').on('click',{},ViewEvents.removeTask); 
     $('#gobackbutton').on('click',{},ViewEvents.returnToCalendarScreen);
-    $( "#findbutton" ).on('click',{},ViewEvents.findPostcode);
+    $( "#findbutton" ).on('click',{event,$dateSelected},ViewEvents.findPostcode);
 
 
     $("#mapViewButton").click(function () {   // to display all tasks on 1 map
         event.preventDefault(); 
         event.stopPropagation();
         console.log("got here too!!!!");
-        View.showMapView;
-        View.displayStarterMap;
+        View.showMapView();
+        View.displayStarterMap(51.5,-0.8);
       
         $ (function createSlider()  {
         
@@ -101,25 +100,21 @@ $(function controllerSupremo(){
                     $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
                       
                         var marker; 
-                        var i;
-                        var tkCount=0;
-                        var infowindow = new google.maps.InfoWindow();
-                                    
-                        for (var iterator=ui.values[0];iterator<ui.values[1]; iterator++){
-                            if (taskEntries[iterator]!==""){
-                                tkCount=tkCount+1;
-                            }
-                        }
+                        var infowindow = new google.maps.InfoWindow();   
+                        var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
+                        
                         $lineBr=$('<br></br>');
+                        var $taskDiv = $('#taskDiv');
                         $taskDiv.append($lineBr);
-                        $taskCount=$('<p>There are '+ tkCount +' tasks in this range:</p>');
+                        var $taskCount=$('<p>There are '+ tasksInRange +' tasks in this range:</p>');
                         $taskDiv.append($taskCount);
 
-                        for (var iterator=ui.values[0];iterator<ui.values[1]; iterator++){
-                            marker = new google.maps.Marker({
-                                position: new google.maps.LatLng(locationsArray[iterator][0], locationsArray[iterator][1]),
-                                map: map
-                                });
+                        for (var dateIterator=ui.values[0];dateIterator<ui.values[1]; dateIterator++){
+                            var coords = Model.getExistingLocation(dateIterator);
+                            var latitude = coords.lat;
+                            var longitude = coords.lng;
+                            Utilities.createMapMarker(latitude,longitude);
+                            
 
                             if (taskEntries[iterator]!==""){
                                 var numTasks=numTasks+1;

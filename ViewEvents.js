@@ -18,6 +18,7 @@ var ViewEvents = (function () {
         var taskTextOnDate = Model.getExistingTask(dateSelected);
         View.displayTaskText(taskTextOnDate);
         View.highlightDate(dateSelected);
+        return dateSelected;
         }   
 
     function saveTaskEntry(event){
@@ -30,7 +31,7 @@ var ViewEvents = (function () {
         Model.storeTaskEntry(textEntered,dateSelected);
         View.highlightDate(dateSelected);    
         View.changeFormToHidden('divTaskEntryForm');  
-        clearTaskText(dateSelected); 
+        Model.clearTaskText(dateSelected); 
         } 
 
     function cancelTaskEntry(event){
@@ -39,7 +40,7 @@ var ViewEvents = (function () {
         var dateSelected=event.target.textContent;                    
         View.changeFormToHidden('divTaskEntryForm');                      
         View.unHighlightDate(dateSelected);     
-        clearTaskText(dateSelected);
+        Model.clearTaskText(dateSelected);
         }
 
     function closeEditForm(event){
@@ -74,12 +75,15 @@ var ViewEvents = (function () {
             $('#formDiv2').addClass("hidden").removeClass("mapsurround2");
             View.clearTasksInSliderView();                             
       }
-      function findPostcode(){
+
+      function findPostcode(event,dateSelected){
             event.preventDefault(); 
             event.stopPropagation();  
-            var dateSelected=event.target.textContent;   
+           
             var search=$('#postcode').val();
-            var returnedCoordinates = View.showPostcodeCoordinates(search);        
+
+            var returnedCoordinates = View.showPostcodeCoordinates(search,5); 
+            console.log('returned co-ordinates are...',returnedCoordinates);
       }
   
   return {
@@ -90,6 +94,7 @@ var ViewEvents = (function () {
     removeTask:removeTask,
     closeEditForm:closeEditForm,
     returnToCalendarScreen:returnToCalendarScreen,
+    findPostcode:findPostcode
   };
 
 
