@@ -4,11 +4,12 @@ var ViewEvents = (function () {
         console.log("this event is",event);
         // var dateSelected=event.target.textContent;
         var dateSelected=event.target.textContent;
+        Model.setDateSelected(dateSelected);  //not the right way to pass that!!
         console.log("dateSelected b4 goingto model",dateSelected);
         var taskEntry = Model.getExistingTask(dateSelected);
         console.log("TaskEntry is...",taskEntry); 
-        console.log("dateSelected",dateSelected); ///?????
-        var formToChange = View.chooseAFormToDisplay(dateSelected,taskEntry);
+       
+        var formToChange = View.chooseAFormToDisplay(taskEntry);
         var currentMonth = Utilities.getCurrentMonthNumber();
         var currentMonthName = Utilities.getMonthName(currentMonth);
         var currentYearNumber = Utilities.getYearNumber(); 
@@ -25,10 +26,12 @@ var ViewEvents = (function () {
         event.preventDefault(); 
         event.stopPropagation();
         
-        var textEntered=$('textarea').val(); 
+        var textEntered = $('textarea').val(); 
         Utilities.validateTaskEntry(textEntered);
-        var dateSelected=event.target.textContent;
+        var dateSelected = Model.getDateSelected();
         Model.storeTaskEntry(textEntered,dateSelected);
+        console.log("stored entry is",textEntered);
+        console.log("date recorded against is",dateSelected);
         View.highlightDate(dateSelected);    
         View.changeFormToHidden('divTaskEntryForm');  
         Model.clearTaskText(dateSelected); 
@@ -37,7 +40,7 @@ var ViewEvents = (function () {
     function cancelTaskEntry(event){
         event.preventDefault(); 
         event.stopPropagation();   
-        var dateSelected=event.target.textContent;                    
+        var dateSelected = Model.getDateSelected();                  
         View.changeFormToHidden('divTaskEntryForm');                      
         View.unHighlightDate(dateSelected);     
         Model.clearTaskText(dateSelected);
@@ -48,7 +51,7 @@ var ViewEvents = (function () {
         event.stopPropagation();
         //cancel form = delete text, turn to hidden, and empty textbox
         // taskEntries.dateSelected="";  
-        var dateSelected=event.target.textContent;
+        var dateSelected = Model.getDateSelected();
         View.changeFormToHidden('divTaskEditForm');
         View.highlightDate(dateSelected);
         dateSelected="";
@@ -56,14 +59,15 @@ var ViewEvents = (function () {
 
       function showEditForm(event){
             event.preventDefault();
-            event.stopPropagation();   
+            event.stopPropagation(); 
+            var dateSelected = Model.getDateSelected();  
             View.changeFormToVisible('divTaskEditForm');     
       } 
 
       function removeTask(event){
             event.preventDefault(); 
             event.stopPropagation();
-            var dateSelected=event.target.textContent;
+            var dateSelected = Model.getDateSelected();
             View.unHighlightDate(dateSelected);   
             taskEntries[dateSelected]="";                   
             View.changeFormToHidden('divTaskEditForm');  
@@ -79,11 +83,11 @@ var ViewEvents = (function () {
       function findPostcode(event,dateSelected){
             event.preventDefault(); 
             event.stopPropagation();  
-           
+            var dateSelected = Model.getDateSelected();
             var search=$('#postcode').val();
 
-            var returnedCoordinates = View.showPostcodeCoordinates(search,5); 
-            console.log('returned co-ordinates are...',returnedCoordinates);
+            View.showPostcodeCoordinates(search); 
+            
       }
   
   return {

@@ -1,20 +1,20 @@
 var View = (function () {
   
     function changeFormToVisible(formToChange){
-    var changeform = $('#'+ formToChange);
-    changeform.addClass('visible').removeClass('hidden');    
+    var $changeform = $('#'+ formToChange);
+    $changeform.addClass('visible').removeClass('hidden');    
      } 
 
     function changeFormToHidden(formToChange){
-        var changeform = $('#'+ formToChange);
-        changeform.addClass('hidden').removeClass('visible'); 
+        var $changeform = $('#'+ formToChange);
+        $changeform.addClass('hidden').removeClass('visible'); 
     }
 
     function changeformHeader(dateSelected, currentMonthName, year){
         $('p.headingtext').text([dateSelected]+ ' '+currentMonthName+' '+ year);
     }
 
-    function chooseAFormToDisplay(dateSelected,taskEntry){
+    function chooseAFormToDisplay(taskEntry){
         if (taskEntry === ""){
             return 'divTaskEntryForm'
             }  
@@ -79,28 +79,34 @@ var View = (function () {
       $('#textBox4').val('');
     
     }
-    function showPostcodeCoordinates(search,dateSelected){
+    function showPostcodeCoordinates(search){
         var url=('http://api.postcodes.io/postcodes/'+ search);
-            console.log("url is...",url);
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', encodeURI(url));
-            xhr.onload = function() {
-                if (xhr.status !== 200) {
-                    console.log('Not OK: ' + xhr.status);
-                     return;
-                }
-                var data = JSON.parse(xhr.responseText);
-                var latitudeReturnedFromLookup= data.result.latitude;
-                var longitudeReturnedFromLookup= data.result.longitude;
-                console.log('values are date,lat,lng',dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
-                var mapCreated = Utilities.createGoogleMap(latitudeReturnedFromLookup,longitudeReturnedFromLookup,'mapTaskEntry');
-                var markerCreated = Utilities.createMapMarker(latitudeReturnedFromLookup, longitudeReturnedFromLookup ,mapCreated); 
-                Model.storeCoordsForLocation(dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
-
-                }
-            xhr.send();
-            return {};
-        }
+        var dateSelected = Model.getDateSelected();
+        console.log("url is...",url);
+        console.log("dateselected is...",dateSelected);
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', encodeURI(url));
+        xhr.onload = function() {
+            if (xhr.status !== 200) {
+                console.log('Not OK: ' + xhr.status);
+                 return;
+            }  
+            console.log("date selected inside xhr function is",dateSelected);
+            var data = JSON.parse(xhr.responseText);
+            var latitudeReturnedFromLookup= data.result.latitude;
+            var longitudeReturnedFromLookup= data.result.longitude;
+            console.log('values are date,lat,lng',dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
+            var mapCreated = Utilities.createGoogleMap(latitudeReturnedFromLookup,longitudeReturnedFromLookup,'mapTaskEntry');
+            var markerCreated = Utilities.createMapMarker(latitudeReturnedFromLookup, longitudeReturnedFromLookup ,mapCreated); 
+            console.log("before calling model.store",dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
+            
+            Model.storeCoordsForLocation(dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
+            console.log("after calling model.store",dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
+        }   
+        xhr.send();
+        // return {};
+       
+      }
 
     function showMapView(){
         $('#formDiv2').addClass("mapsurround2").removeClass("hidden");

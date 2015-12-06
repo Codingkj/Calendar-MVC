@@ -28,12 +28,13 @@
 
 $(function controllerSupremo(){  
     var $dateSelected = "";  
+    var $locationsArray= [];
     var $bodyElement = $('body');
     var $gridElement = $('#grid');
-    var currentMonthNumber = Utilities.getCurrentMonthNumber();
-    var currentMonthName = Utilities.getMonthName(currentMonthNumber); 
-    var currentYearNumber = Utilities.getYearNumber(); 
-    View.createPageHeader(currentMonthName, currentYearNumber,$bodyElement);
+    var $currentMonthNumber = Utilities.getCurrentMonthNumber();
+    var $currentMonthName = Utilities.getMonthName(currentMonthNumber); 
+    var $currentYearNumber = Utilities.getYearNumber(); 
+    View.createPageHeader($currentMonthName, $currentYearNumber,$bodyElement);
     View.createGridOfDatesView($bodyElement);
     Model.createWeekdayLabelCells($gridElement);
    // createInitialPageView(currentMonthName);
@@ -42,18 +43,18 @@ $(function controllerSupremo(){
     var $weekdayLabels = Model.getWeekdayLabels();
 
     View.setWeekdayLabelsToColumns($dayHeaderCells, $weekdayLabels);
-    var numDaysInMonth = Utilities.getDatesInCurrentMonth(currentYearNumber,currentMonthNumber);
-    var locationsArray= [];
-    var taskEntryArray = Model.initialiseTaskStorageArray(numDaysInMonth);
-    Model.initialiseLocationsStorageArray(locationsArray);
+    var $numDaysInMonth = Utilities.getDatesInCurrentMonth($currentYearNumber,$currentMonthNumber);
     
-    var startCell = new Date(currentMonthName+' 1, 2015 00:00:00').getDay();
-    var daysToUse = Model.setBlanksAtStartOfMonth(currentMonthName,startCell); 
-    var daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth(currentMonthName,daysToUse,numDaysInMonth,startCell);   
-    var allCellsForDates = View.setArrayValuesToTablePosition(daysToUseWithBlanksAdded);   
+    var $taskEntryArray = Model.initialiseTaskStorageArray($numDaysInMonth);
+    Model.initialiseLocationsStorageArray($locationsArray);
     
-    var dateToHighlight = Utilities.findTodaysDate();    
-    View.setTodayHighlight(dateToHighlight);
+    var $startCell = Model.getStartCell();
+    var $daysToUse = Model.setBlanksAtStartOfMonth($currentMonthName,$startCell); 
+    var $daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth($currentMonthName,$daysToUse,$numDaysInMonth,$startCell);   
+    var $allCellsForDates = View.setArrayValuesToTablePosition($daysToUseWithBlanksAdded);   
+    
+    var $dateToHighlight = Utilities.findTodaysDate();    
+    View.setTodayHighlight($dateToHighlight);
 
     ViewForms.createTaskEntryForm($bodyElement);
     ViewForms.createTaskEditForm($bodyElement);
@@ -63,7 +64,7 @@ $(function controllerSupremo(){
 
     $dateSelected=$('.todaysdate').on('click',{},ViewEvents.showClickedOnDate);
     $dateSelected=$('.active').on('click',{},ViewEvents.showClickedOnDate);
-    $('#submitbutton').on('click',{},ViewEvents.saveTaskEntry);
+    $('#submitbutton').on('click',{dateSelected},ViewEvents.saveTaskEntry);
     $('#cancelbutton').on('click',{},ViewEvents.cancelTaskEntry);
     $('#closebutton').on('click',{},ViewEvents.closeEditForm);  
     $('#editbutton').on('click',{},ViewEvents.showEditForm);

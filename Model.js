@@ -1,9 +1,10 @@
 var Model = (function () {
   
   var DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']; 
-  var NUMBER_OF_COLUMNS=7;
+  var NUMBER_OF_COLUMNS = 7;
   var taskEntries = {};
   var locationsArray = [];
+  var currentDateSelected = "";
 
   function initialiseTaskStorageArray(numDaysInMonth){  
     for (var counter = 0; counter < numDaysInMonth; counter++){
@@ -18,14 +19,28 @@ var Model = (function () {
         }    
   }
 
-  function storeCoordsForLocation(date,latitude,longitude){
-    locationsArray[date]=[latitude,longitude];
+  function storeCoordsForLocation(dateSelected,latitude,longitude){
+    locationsArray[dateSelected] = [latitude,longitude];
+    console.log("stored locations are now",locationsArray);
   }
 
   function storeTaskEntry(taskText,dateSelected){
-    taskEntries[dateSelected]=taskText;
+    taskEntries[dateSelected] = taskText;
+    console.log("TaskEntries are now",taskEntries);
   }
 
+  function setDateSelected(dateSelected){
+    currentdateSelected = dateSelected;
+    console.log("Date now set as..",currentDateSelected);
+  }
+
+  function getDateSelected(){
+    return currentDateSelected;
+  }
+  function getStartCell(){
+    startCell = new Date(currentMonthName+' 1, 2015 00:00:00').getDay();
+    return startCell;
+  }
   function getWeekdayLabels(){
     return DAY_NAMES;
   }
@@ -153,7 +168,9 @@ var Model = (function () {
     clearTaskText:clearTaskText,
     getTodaysCellOnCalendar:getTodaysCellOnCalendar,
     getNumberOfTasksInRange:getNumberOfTasksInRange,
-    getExistingLocation:getExistingLocation
+    getExistingLocation:getExistingLocation,
+    setDateSelected:setDateSelected,
+    getDateSelected:getDateSelected,
   };
   
 })();
