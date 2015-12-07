@@ -17,39 +17,75 @@ var Utilities = (function () {
 
   function getDatesInCurrentMonth(currentYear,currentMonthNumber){        
       var dateCount;  //could this all be in the return statement.
-      
-      dateCount = new Date(currentYear, currentMonthNumber, null).getDate();
-      console.log("dates in Month",dateCount);
-      
+      dateCount = new Date(currentYear, currentMonthNumber, null).getDate();    
       return dateCount;
   }
+
   function findTodaysDate(){
       var today = new Date().getDate();
     return today;
   }
 
-  function createGoogleMap(latitude,longitude,mapContainerId){
-        var map = new google.maps.Map(document.getElementById("mapTaskEntry"), {
-                                  zoom: 10,
-                                  center: new google.maps.LatLng(latitude,longitude),
-                                  mapTypeId: google.maps.MapTypeId.ROADMAP
-                                });
-        return map;
+  function createGoogleMap(latitude,longitude,mapContainer){
+        console.log("data received, lat, long, mapContainer",latitude, longitude,mapContainer);
+
+        var divIwant=document.getElementById('mapTaskEntry');
+        console.log("div i want",divIwant);
+     
+        var map = new google.maps.Map(document.getElementById('mapTaskEntry'),{
+          zoom:12,
+          center:new google.maps.LatLng(latitude,longitude)});
+
+        var marker = new google.maps.Marker({
+                    position:{lat: longitude, lng: longitude},
+                    map: map,
+                    title: 'Your task is here!',
+                   });  
+  }
+
+
+// mapSummaryDiv
+
+  function createGoogleMap(latitude,longitude,mapContainer){
+      
+      console.log("lat-lng passed into createGoogleMap...",latitude,longitude,mapContainer); 
+      var mapOptions={ 
+            center:new google.maps.LatLng(latitude,longitude),
+            zoom:12   };
+     
+      var map = new google.maps.Map(document.getElementById("mapTaskEntry"),mapOptions);
+      console.log('map is...',map);
+    return map;
+  }
+
+  function createGoogleMap2(latitude,longitude,mapContainer){
+      
+      console.log("lat-lng passed into createGoogleMap...",latitude,longitude,mapContainer); 
+      var mapOptions={ 
+            center:new google.maps.LatLng(latitude,longitude),
+            zoom:12   };
+     
+      var map = new google.maps.Map(document.getElementById("mapSummaryDiv"),mapOptions);
+      console.log('map is...',map);
+    return map;
   }
 
   function createMapMarker(latitude,longitude,map){
-        var marker = new google.maps.Marker({
+      console.log("lat-lng passed into createmarker...",latitude,longitude,map);
+
+      var marker = new google.maps.Marker({
                             position:{lat:latitude,lng:longitude},
                             map: map,
                             title: 'Your task is here!',
-                          }); 
+                          });
+      return marker; 
     }
 
   function validateTaskEntry(taskText){
     if (taskText===""){
           return ('Hey, enter something before you leave - or press Cancel');   
         }
-    return null;
+      return null;
 }
   
   return {
@@ -59,6 +95,7 @@ var Utilities = (function () {
     getDatesInCurrentMonth:getDatesInCurrentMonth,
     findTodaysDate:findTodaysDate,
     createGoogleMap:createGoogleMap,
+    createGoogleMap2:createGoogleMap2,
     createMapMarker:createMapMarker,
     validateTaskEntry:validateTaskEntry
   };

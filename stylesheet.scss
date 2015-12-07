@@ -6,7 +6,7 @@
   position:absolute;
   font-size: 0.5vw;
 }
-#mapView-mapdiv{
+#mapSummaryDiv{
 }
 #taskdiv{
   width:40vw;
@@ -36,6 +36,10 @@
   width:70vw;
   background-color: #A1D490;
   height:40vw;
+}
+#mapdiv1{
+  background-color: green;
+  width:30%;
 }
 
 #mapform{
@@ -76,27 +80,20 @@
   float:right;
   position: relative;
 }
-#mapdiv1{
-  background-color: green;
-  width:30%;
-  
+.mapStyle3{
+  height: 20vw;
+  width: 20vw;
+  float:right;
+  position: relative;
+  background: #ffcce6;
+  border-style: solid;
+  border-color: blue;
+  border-width: 2px;
 }
 .coordsbox{
   width:30%;
 }
 
-.mapsurround{
-  display:inline;
-  position:absolute;
-  top:10vw;
-  left:10vw;
-  float:left;
-  border-style: solid;
-  border-color: black;
-  background-color: aqua;
-  width:40vw;
-  height:20vw;
-}
 .mapsurround2{
   display:inline;
   position:absolute;

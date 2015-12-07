@@ -4,22 +4,24 @@ var Model = (function () {
   var NUMBER_OF_COLUMNS = 7;
   var taskEntries = {};
   var locationsArray = [];
-  var currentDateSelected = "";
+  var currentdateSelected = "";
 
   function initialiseTaskStorageArray(numDaysInMonth){  
-    for (var counter = 0; counter < numDaysInMonth; counter++){
+    for (var counter = 1; counter < numDaysInMonth+1; counter++){
         taskEntries[counter] = "";
         }
     return taskEntries;
     }
   
   function initialiseLocationsStorageArray(numDaysInMonth){     
-     for (var counter = 0; counter < numDaysInMonth; counter++) {
+     for (var counter = 1; counter < numDaysInMonth+1; counter++) {
           locationsArray[counter] = [,];
         }    
   }
 
   function storeCoordsForLocation(dateSelected,latitude,longitude){
+    console.log("got to store coords...",dateSelected,latitude,longitude);
+    console.log("locationsArray is..",locationsArray);
     locationsArray[dateSelected] = [latitude,longitude];
     console.log("stored locations are now",locationsArray);
   }
@@ -31,23 +33,25 @@ var Model = (function () {
 
   function setDateSelected(dateSelected){
     currentdateSelected = dateSelected;
-    console.log("Date now set as..",currentDateSelected);
+    console.log("Date now set as..",currentdateSelected);
   }
 
   function getDateSelected(){
-    return currentDateSelected;
+    return currentdateSelected;
   }
-  function getStartCell(){
-    startCell = new Date(currentMonthName+' 1, 2015 00:00:00').getDay();
-    return startCell;
+
+  function getStartCell(currentMonthName){
+    var $getString = currentMonthName + ' 1, 2015 00:00:00';
+    $startCell = new Date($getString).getDay();
+    return $startCell;
   }
+
   function getWeekdayLabels(){
     return DAY_NAMES;
   }
 
   function getWeekdayCells(){
     var $headers = $('.firstrow');
-    console.log('headers in function are',$headers.length);
     return $headers;
   }
 
@@ -64,9 +68,13 @@ var Model = (function () {
   }
 
   function getExistingLocation(dateSelected){
-    var coords = {lat:locationsArray[dateSelected][0],
-                  lng:locationsArray[dateSelected][1]}
-    return coords;
+    {
+      console.log("dateSelected in getexisting location",dateSelected);
+      console.log("locations array is currently...",locationsArray);
+      var coords = [locationsArray[dateSelected][0],locationsArray[dateSelected][1]];
+
+      return coords;
+    }
   }
 
   function createWeekdayLabelCells(gridElement){
@@ -91,14 +99,7 @@ var Model = (function () {
       });
    }
 
-  // function getTodayCell(todaysDate,alldates){
-  //    // var allCells = $('datecell');
-  //     // var $allCells = $('.active');
-  //     console.log("all cells are",alldates);
-  //     var todayCell = alldates[todaysDate];
-  //     console.log("today cell is",todayCell);
-  // return todayCell;
-  // }
+
 
   function setBlanksAtStartOfMonth(currentMonthName,startCell){    
     var cellsThatCanHaveDates=$('datecell');    
@@ -171,6 +172,7 @@ var Model = (function () {
     getExistingLocation:getExistingLocation,
     setDateSelected:setDateSelected,
     getDateSelected:getDateSelected,
+    getStartCell:getStartCell,
   };
   
 })();

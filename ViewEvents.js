@@ -1,25 +1,26 @@
 var ViewEvents = (function () {
   
-    function showClickedOnDate(event){  
-        console.log("this event is",event);
-        // var dateSelected=event.target.textContent;
-        var dateSelected=event.target.textContent;
-        Model.setDateSelected(dateSelected);  //not the right way to pass that!!
-        console.log("dateSelected b4 goingto model",dateSelected);
-        var taskEntry = Model.getExistingTask(dateSelected);
+    function showClickedOnDate(clickEvent){  
+        console.log("this event is",clickEvent);
+        console.log("just Event",event);
+        var $dateSelected = clickEvent.target.textContent;
+        Model.setDateSelected($dateSelected);      //not the right way to pass that!!
+
+        console.log("dateSelected b4 goingto model",$dateSelected);
+        var taskEntry = Model.getExistingTask($dateSelected);
         console.log("TaskEntry is...",taskEntry); 
        
         var formToChange = View.chooseAFormToDisplay(taskEntry);
         var currentMonth = Utilities.getCurrentMonthNumber();
         var currentMonthName = Utilities.getMonthName(currentMonth);
         var currentYearNumber = Utilities.getYearNumber(); 
-        View.changeformHeader(dateSelected,currentMonthName,currentYearNumber);
+        View.changeformHeader($dateSelected,currentMonthName,currentYearNumber);
 
         View.changeFormToVisible(formToChange);
-        var taskTextOnDate = Model.getExistingTask(dateSelected);
+        var taskTextOnDate = Model.getExistingTask($dateSelected);
         View.displayTaskText(taskTextOnDate);
-        View.highlightDate(dateSelected);
-        return dateSelected;
+        View.highlightDate($dateSelected);
+        return $dateSelected;
         }   
 
     function saveTaskEntry(event){
@@ -75,19 +76,21 @@ var ViewEvents = (function () {
       function returnToCalendarScreen(event){
             event.preventDefault(); 
             event.stopPropagation();   
-                                    
-            $('#formDiv2').addClass("hidden").removeClass("mapsurround2");
+            var dateSelected = Model.getDateSelected(); 
+            View.hideSummaryMap();                
+            
             View.clearTasksInSliderView();                             
       }
 
-      function findPostcode(event,dateSelected){
+      function findPostcode(event){
             event.preventDefault(); 
             event.stopPropagation();  
             var dateSelected = Model.getDateSelected();
-            var search=$('#postcode').val();
-
-            View.showPostcodeCoordinates(search); 
-            
+            console.log("Date selected in findPostcode",dateSelected);
+            var search = $('#postcode').val();
+            mapContainer = document.getElementById('mapTaskEntry');
+            View.showPostcodeCoordinates(search,dateSelected,mapContainer); 
+            console.log("at end of find Postcode function");
       }
   
   return {

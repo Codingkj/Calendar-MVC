@@ -35,8 +35,12 @@ var ViewForms = (function () {
     var $removeField=$('<button id="removebutton">REMOVE</button>');  
     var $lineBr=$('<br></br>');  
 
+    var $mapEditDiv=$('<div id="mapTaskEdit" class="mapStyle3"></div>');
+
     $secondTaskForm.append($secondFormHeader).append($lineBr).append($lineBr).append($secondTextField).append($lineBr).append($closeField).append($editField).append($removeField);  
-    $taskEditDiv.append($secondTaskForm); 
+    $secondTaskForm.append($mapEditDiv);
+    $taskEditDiv.append($secondTaskForm);
+
     parentElement.append($taskEditDiv); 
   }
 
@@ -62,7 +66,7 @@ var ViewForms = (function () {
     $mapForm2.append($lineBr);
     $mapForm2.append($sliderContainer);
     var $textLabel=$('<p class="pcode2">The tasks in range are:</p>');
-    var $mapDiv2=$('<div id="mapView-mapdiv" class="mapStyle2"></div>');
+    var $mapDiv2=$('<div id="mapSummaryDiv" class="mapStyle2"></div>');
     $mapForm2.append($mapDiv2);
 
     var $taskDiv=$('<div id="taskDiv"></div>');

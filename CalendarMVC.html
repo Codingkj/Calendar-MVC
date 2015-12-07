@@ -32,7 +32,7 @@ $(function controllerSupremo(){
     var $bodyElement = $('body');
     var $gridElement = $('#grid');
     var $currentMonthNumber = Utilities.getCurrentMonthNumber();
-    var $currentMonthName = Utilities.getMonthName(currentMonthNumber); 
+    var $currentMonthName = Utilities.getMonthName($currentMonthNumber); 
     var $currentYearNumber = Utilities.getYearNumber(); 
     View.createPageHeader($currentMonthName, $currentYearNumber,$bodyElement);
     View.createGridOfDatesView($bodyElement);
@@ -48,30 +48,41 @@ $(function controllerSupremo(){
     var $taskEntryArray = Model.initialiseTaskStorageArray($numDaysInMonth);
     Model.initialiseLocationsStorageArray($locationsArray);
     
-    var $startCell = Model.getStartCell();
-    var $daysToUse = Model.setBlanksAtStartOfMonth($currentMonthName,$startCell); 
-    var $daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth($currentMonthName,$daysToUse,$numDaysInMonth,$startCell);   
-    var $allCellsForDates = View.setArrayValuesToTablePosition($daysToUseWithBlanksAdded);   
+    var $startCell = Model.getStartCell($currentMonthName);
     
-    var $dateToHighlight = Utilities.findTodaysDate();    
+    var $daysToUse = Model.setBlanksAtStartOfMonth($currentMonthName,$startCell); 
+    
+    var $daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth($currentMonthName,$daysToUse,$numDaysInMonth,$startCell);   
+     
+    var $allCellsForDates = View.setArrayValuesToTablePosition($daysToUseWithBlanksAdded);   
+  
+    var $dateToHighlight = Utilities.findTodaysDate(); 
+  
     View.setTodayHighlight($dateToHighlight);
-
     ViewForms.createTaskEntryForm($bodyElement);
     ViewForms.createTaskEditForm($bodyElement);
     ViewForms.createMapView($bodyElement);
   //  addMarksToSlider();
   
+  //  .on( "click", handler )
 
-    $dateSelected=$('.todaysdate').on('click',{},ViewEvents.showClickedOnDate);
-    $dateSelected=$('.active').on('click',{},ViewEvents.showClickedOnDate);
-    $('#submitbutton').on('click',{dateSelected},ViewEvents.saveTaskEntry);
-    $('#cancelbutton').on('click',{},ViewEvents.cancelTaskEntry);
-    $('#closebutton').on('click',{},ViewEvents.closeEditForm);  
-    $('#editbutton').on('click',{},ViewEvents.showEditForm);
-    $('#removebutton').on('click',{},ViewEvents.removeTask); 
-    $('#gobackbutton').on('click',{},ViewEvents.returnToCalendarScreen);
-    $( "#findbutton" ).on('click',{event,$dateSelected},ViewEvents.findPostcode);
+    $('.todaysdate').on('click',ViewEvents.showClickedOnDate);
+    $('.active').on('click',ViewEvents.showClickedOnDate);
 
+    $('#submitbutton').on('click',ViewEvents.saveTaskEntry);
+    $('#cancelbutton').on('click',ViewEvents.cancelTaskEntry);
+    $('#closebutton').on('click',ViewEvents.closeEditForm);  
+    $('#editbutton').on('click',ViewEvents.showEditForm);
+    $('#removebutton').on('click',ViewEvents.removeTask); 
+    $('#gobackbutton').on('click',ViewEvents.returnToCalendarScreen);
+
+    $( "#findbutton" ).on('click',ViewEvents.findPostcode);
+
+// function addCalendarClickListener(selector,callback)
+//$('body').on('click','['+selector+'],function(clickevent){
+//    var currentday = $(this).attr(selector);
+//   callback(currentday);
+// });
 
     $("#mapViewButton").click(function () {   // to display all tasks on 1 map
         event.preventDefault(); 
@@ -90,7 +101,7 @@ $(function controllerSupremo(){
           step:1,
       
             slide: function onSliderMove( event, ui ) {
-                      $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
+                      $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ $currentMonthName);
                    },
             start: function( event, ui ) {
                       $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
@@ -99,47 +110,53 @@ $(function controllerSupremo(){
                     View.clearTasksInSliderView();
 
                     $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
-                      
-                        var marker; 
-                        var infowindow = new google.maps.InfoWindow();   
-                        var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
                         
-                        $lineBr=$('<br></br>');
-                        var $taskDiv = $('#taskDiv');
-                        $taskDiv.append($lineBr);
-                        var $taskCount=$('<p>There are '+ tasksInRange +' tasks in this range:</p>');
-                        $taskDiv.append($taskCount);
+                    var $marker; 
+                    var counter = 1;
+                    var infowindow = new google.maps.InfoWindow();   
+                    var $map;
+                    var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
+                    $lineBr=$('<br></br>');
+                    $taskShortDiv = $('#taskDiv');
+                    $taskShortDiv.append($lineBr);
+                    $taskSummary = $('<p>There are '+ tasksInRange +' tasks in this range:</p>');
+                    $taskShortDiv.append($taskSummary);
+            
+                    for (var $dateIterator=ui.values[0];$dateIterator<ui.values[1]+1; $dateIterator++){
+                        var $dateWithTask = Model.getExistingTask($dateIterator);
+                        if ($dateWithTask !== ""){
+                            console.log("date iterator is now",$dateIterator);
 
-                        for (var dateIterator=ui.values[0];dateIterator<ui.values[1]; dateIterator++){
-                            var coords = Model.getExistingLocation(dateIterator);
-                            var latitude = coords.lat;
-                            var longitude = coords.lng;
-                            Utilities.createMapMarker(latitude,longitude);
+                            var $coords = Model.getExistingLocation($dateIterator);
+                            var $latitude = $coords[0];
+                            var $longitude = $coords[1];
+                            $mapContainer = $('#mapSummaryDiv');
+                           
+                            console.log("Passed to map",$latitude,$longitude,$mapContainer);
+                            if (counter = 1) {
+                                $map = Utilities.createGoogleMap2($latitude,$longitude,$mapContainer);
+                                counter = 2;
+                            }
+                            $marker = Utilities.createMapMarker($latitude,$longitude,$map);
+                               
+                            View.displayTasksInSelection($dateIterator, ui.values[0],ui.values[1]);
+                           
+                            var numTasks = numTasks+1;
+
+                      //    View.addListenerToMap
                             
-
-                            if (taskEntries[iterator]!==""){
-                                var numTasks=numTasks+1;
-                                $textBox4=$('<div id="textBox4"></div>');
-                                $ptext4=$('<p></p>').val="";
-                                console.log("task text",taskEntries[iterator]);
-                                $lineBr=$('<br></br>'); 
-                                $textBox4.append(iterator," Nov: ",taskEntries[iterator]).append($lineBr);
-                                $taskDiv.append($textBox4);  
-                                $taskDiv.append($lineBr);
-                                $taskDiv.append($lineBr);
-                                }
-
-                            google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                            google.maps.event.addListener($marker, 'click', (function($marker, $dateIterator) { 
                                     return function() {
-                                      infowindow.setContent(taskEntries[iterator]);
-                                      infowindow.open(map, marker);
-                                }
-                            })(marker, iterator));
-                        }   //end of for loop
-                          
+                                      var content = Model.getExistingTask($dateIterator);
+                                      infowindow.setContent(content);
+                                      infowindow.open($map, $marker);
+                                    }
+                            })($marker,$dateIterator));  //end of Listener
+                        }   //end of if loop
+                       }   //end of for loop
                     },  //end of slider stop function
                 }); //end of .slider function
-         
+             
       });  //end of  slider functionality function call
     });  //end of mapView
 

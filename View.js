@@ -21,6 +21,10 @@ var View = (function () {
         return 'divTaskEditForm';       
     } 
 
+    function hideSummaryMap(){
+        $('#formDiv2').addClass("hidden").removeClass("mapsurround2");
+    }
+
     function createGridOfDatesView(parentElement){
       var $table1 = $('<table id="grid"></table>');
       parentElement.append($table1);
@@ -48,6 +52,20 @@ var View = (function () {
 
     function displayTaskText(taskText){
       $('#storedTextId').text(taskText);
+    }
+    function displayTasksInSelection(iterator,startDate,stopDate){
+      var $selectedTask = Model.getExistingTask(iterator);
+      if ($selectedTask !== ""){
+            
+            $textBox4=$('<div id="textBox4"></div>');
+            $ptext4=$('<p></p>').val="";
+            console.log("task text",$selectedTask);
+            $lineBr=$('<br></br>'); 
+            $textBox4.append(iterator," Nov: ",$selectedTask).append($lineBr);
+            $('#taskDiv').append($textBox4);  
+            $('#taskDiv').append($lineBr);
+            $('#taskDiv').append($lineBr);
+            }
     }
 
     function setTodayHighlight(DateToHighlight){
@@ -79,11 +97,11 @@ var View = (function () {
       $('#textBox4').val('');
     
     }
-    function showPostcodeCoordinates(search){
+    function showPostcodeCoordinates(search,dateSelected,mapcontainer){
         var url=('http://api.postcodes.io/postcodes/'+ search);
-        var dateSelected = Model.getDateSelected();
-        console.log("url is...",url);
-        console.log("dateselected is...",dateSelected);
+       
+        console.log("url & date is...",url,dateSelected);
+       
         var xhr = new XMLHttpRequest();
         xhr.open('GET', encodeURI(url));
         xhr.onload = function() {
@@ -92,18 +110,21 @@ var View = (function () {
                  return;
             }  
             console.log("date selected inside xhr function is",dateSelected);
+
             var data = JSON.parse(xhr.responseText);
             var latitudeReturnedFromLookup= data.result.latitude;
             var longitudeReturnedFromLookup= data.result.longitude;
+
             console.log('values are date,lat,lng',dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
             var mapCreated = Utilities.createGoogleMap(latitudeReturnedFromLookup,longitudeReturnedFromLookup,'mapTaskEntry');
             var markerCreated = Utilities.createMapMarker(latitudeReturnedFromLookup, longitudeReturnedFromLookup ,mapCreated); 
-            console.log("before calling model.store",dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
-            
+                
             Model.storeCoordsForLocation(dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
             console.log("after calling model.store",dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
         }   
+        console.log("before the xhr send command");
         xhr.send();
+        console.log("after the xhr send command");
         // return {};
        
       }
@@ -119,7 +140,7 @@ var View = (function () {
 
         // var mylatlng = new google.maps.LatLng(latitude, longitude);
         // console.log("mylatlng", mylatlng);
-        var map= new google.maps.Map(document.getElementById("mapView-mapdiv"),mapOptions);
+        var map= new google.maps.Map(document.getElementById("mapSummaryDiv"),mapOptions);
         var marker = new google.maps.Marker({
                     position:{lat: longitude, lng: longitude},
                     map: map,
@@ -132,7 +153,7 @@ var View = (function () {
     
       $.each(daysToUse, function(index) {
           if(!(index%NUMBER_OF_COLUMNS)) tableRow = $('<tr>');
-
+          
           cell = $('<td>').html(daysToUse[index]);
           cell.addClass('active');
           $('#grid').append(tableRow.append(cell)); 
@@ -146,18 +167,20 @@ var View = (function () {
     changeFormToHidden: changeFormToHidden,
     changeformHeader: changeformHeader,
     chooseAFormToDisplay:chooseAFormToDisplay,
-    createGridOfDatesView:createGridOfDatesView,
-    highlightDate:highlightDate,
-    unHighlightDate:unHighlightDate,
-    displayTaskText:displayTaskText,
-    setTodayHighlight:setTodayHighlight,
-    setWeekdayLabelsToColumns:setWeekdayLabelsToColumns,
-    createPageHeader:createPageHeader,
     clearTasksInSliderView:clearTasksInSliderView,
+    createGridOfDatesView:createGridOfDatesView,
+    createPageHeader:createPageHeader,
+    displayTaskText:displayTaskText,
+    displayStarterMap:displayStarterMap,
+    displayTasksInSelection:displayTasksInSelection,
+    hideSummaryMap:hideSummaryMap,
+    highlightDate:highlightDate,
+    setTodayHighlight:setTodayHighlight,
+    setWeekdayLabelsToColumns:setWeekdayLabelsToColumns, 
+    setArrayValuesToTablePosition:setArrayValuesToTablePosition,
     showPostcodeCoordinates:showPostcodeCoordinates,
     showMapView:showMapView,
-    displayStarterMap:displayStarterMap,
-    setArrayValuesToTablePosition:setArrayValuesToTablePosition
+    unHighlightDate:unHighlightDate
   };
   
 })();
