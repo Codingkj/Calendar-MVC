@@ -29,6 +29,7 @@ var ViewForms = (function () {
     var $taskEditDiv=$('<div id="divTaskEditForm" class="hidden"></div>');
     var $secondTaskForm=$('<form id="secondformpage"></form>');
     var $secondFormHeader=$('<p id="headtext" class="headingtext"></p>');
+    var $introLine =$('<p id="intro">The task you have on this day is:</p>')
     var $secondTextField=$('<p id="storedTextId" class="oldtext"></p>');
     var $closeField=$('<button id="closebutton">CLOSE</button>');   
     var $editField=$('<button id="editbutton">EDIT</button>');      
@@ -37,11 +38,11 @@ var ViewForms = (function () {
 
     var $mapEditDiv=$('<div id="mapTaskEdit" class="mapStyle3"></div>');
 
-    $secondTaskForm.append($secondFormHeader).append($lineBr).append($lineBr).append($secondTextField).append($lineBr).append($closeField).append($editField).append($removeField);  
+    $secondTaskForm.append($secondFormHeader).append($lineBr).append($lineBr).append($introLine).append($secondTextField).append($lineBr).append($closeField).append($editField).append($removeField);  
     $secondTaskForm.append($mapEditDiv);
     $taskEditDiv.append($secondTaskForm);
-
     parentElement.append($taskEditDiv); 
+
   }
 
   function createMapView(parentElement){  //I think this is a mixture of DOM and view stuff.
@@ -74,7 +75,6 @@ var ViewForms = (function () {
     $formDiv2.append($mapForm2);
     parentElement.append($formDiv2);  
   }
-
   
   return {
     createTaskEntryForm: createTaskEntryForm,

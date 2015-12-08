@@ -2,6 +2,7 @@ var Model = (function () {
   
   var DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']; 
   var NUMBER_OF_COLUMNS = 7;
+  var dateSelected = "";
   var taskEntries = {};
   var locationsArray = [];
   var currentdateSelected = "";

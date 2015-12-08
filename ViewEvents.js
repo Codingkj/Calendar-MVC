@@ -3,24 +3,24 @@ var ViewEvents = (function () {
     function showClickedOnDate(clickEvent){  
         console.log("this event is",clickEvent);
         console.log("just Event",event);
-        var $dateSelected = clickEvent.target.textContent;
-        Model.setDateSelected($dateSelected);      //not the right way to pass that!!
+        var dateSelected = clickEvent.target.textContent;
+        Model.setDateSelected(dateSelected);      //not the right way to pass that!!
 
-        console.log("dateSelected b4 goingto model",$dateSelected);
-        var taskEntry = Model.getExistingTask($dateSelected);
+        console.log("dateSelected b4 goingto model",dateSelected);
+        var taskEntry = Model.getExistingTask(dateSelected);
         console.log("TaskEntry is...",taskEntry); 
        
         var formToChange = View.chooseAFormToDisplay(taskEntry);
         var currentMonth = Utilities.getCurrentMonthNumber();
         var currentMonthName = Utilities.getMonthName(currentMonth);
         var currentYearNumber = Utilities.getYearNumber(); 
-        View.changeformHeader($dateSelected,currentMonthName,currentYearNumber);
-
+        View.changeformHeader(dateSelected,currentMonthName,currentYearNumber);
+        View.setMapOnForm(formToChange);
         View.changeFormToVisible(formToChange);
-        var taskTextOnDate = Model.getExistingTask($dateSelected);
+        var taskTextOnDate = Model.getExistingTask(dateSelected);
         View.displayTaskText(taskTextOnDate);
-        View.highlightDate($dateSelected);
-        return $dateSelected;
+        View.highlightDate(dateSelected);
+        return dateSelected;
         }   
 
     function saveTaskEntry(event){
@@ -31,7 +31,7 @@ var ViewEvents = (function () {
         Utilities.validateTaskEntry(textEntered);
         var dateSelected = Model.getDateSelected();
         Model.storeTaskEntry(textEntered,dateSelected);
-        console.log("stored entry is",textEntered);
+    
         console.log("date recorded against is",dateSelected);
         View.highlightDate(dateSelected);    
         View.changeFormToHidden('divTaskEntryForm');  
@@ -61,7 +61,8 @@ var ViewEvents = (function () {
       function showEditForm(event){
             event.preventDefault();
             event.stopPropagation(); 
-            var dateSelected = Model.getDateSelected();  
+            var dateSelected = Model.getDateSelected(); 
+            
             View.changeFormToVisible('divTaskEditForm');     
       } 
 
@@ -92,16 +93,26 @@ var ViewEvents = (function () {
             View.showPostcodeCoordinates(search,dateSelected,mapContainer); 
             console.log("at end of find Postcode function");
       }
+      function showSummaryMap(event) {   // to display all tasks on 1 map
+        event.preventDefault(); 
+        event.stopPropagation();
+        console.log("got here too!!!!");
+        View.showMapView();
+        View.displayStarterMap(51.4996829,-0.0845579);
+        sliderWidth = Utilities.getDatesInCurrentMonth();
+        View.createSlider(sliderWidth);
+      }
   
   return {
+    cancelTaskEntry:cancelTaskEntry,
+    closeEditForm:closeEditForm,
+    findPostcode:findPostcode,
+    removeTask:removeTask,
+    returnToCalendarScreen:returnToCalendarScreen,
     showClickedOnDate:showClickedOnDate,
     saveTaskEntry:saveTaskEntry,
-    cancelTaskEntry:cancelTaskEntry,
     showEditForm:showEditForm,
-    removeTask:removeTask,
-    closeEditForm:closeEditForm,
-    returnToCalendarScreen:returnToCalendarScreen,
-    findPostcode:findPostcode
+    showSummaryMap:showSummaryMap
   };
 
 

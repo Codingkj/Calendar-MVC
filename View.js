@@ -158,9 +158,99 @@ var View = (function () {
           cell.addClass('active');
           $('#grid').append(tableRow.append(cell)); 
       });   
+    }   
 
-    }        
+    function setMapOnForm(formToChange){
+      
+      var dateSelected = Model.getDateSelected();
+      if (formToChange === 'divTaskEditForm'){
+            var locationSelected = Model.getExistingLocation(dateSelected);
+            console.log('locationselected overall object',locationSelected);
+            console.log('locationSelected 0....',locationSelected[0]);
+            var latitude = locationSelected[0];
+            var longitude = locationSelected[1];
+            if (locationSelected !== ""){
+              Utilities.createGoogleMap(latitude,longitude,'mapTaskEdit');
+            } 
+            return;
+      }
+      var latitude = 51.4996829;
+      var longitude = -0.0845579;
+      Utilities.createGoogleMap(latitude,longitude,'mapTaskEntry');   
+      } 
+    
+    function showTasksInRange(tasksInRange){
+        var lineBr=$('<br></br>');
+        var taskShortDiv = $('#taskDiv');
+        taskShortDiv.append(lineBr);
+        var taskSummary = $('<p>There are '+ tasksInRange +' tasks in this range:</p>');
+        taskShortDiv.append(taskSummary);
+    }
 
+    function createMultipleMarkers(startDate,stopDate){
+            var marker; 
+            var firstTime = true;
+            var infowindow = new google.maps.InfoWindow();   
+            var map;
+            for (var dateIterator=startDate; dateIterator<stopDate+1; dateIterator++){
+                var dateWithTask = Model.getExistingTask(dateIterator);
+                if (dateWithTask !== ""){
+                    console.log("date iterator is now",dateIterator);
+                    var coords = Model.getExistingLocation(dateIterator);
+                    var latitude = coords[0];
+                    var longitude = coords[1];
+                    // mapContainer = $('#mapSummaryDiv');
+                    console.log("Passed to map",latitude,longitude,mapContainer);
+                    if (firstTime === true) {
+                        map = Utilities.createGoogleMap(latitude,longitude,'mapSummaryDiv');
+                        firstTime = false;
+                    }
+                    marker = Utilities.createMapMarker(latitude,longitude,map);    
+                    View.displayTasksInSelection(dateIterator, ui.values[0],ui.values[1]);
+                    var numTasks = numTasks+1;
+                    
+                    google.maps.event.addListener(marker, 'click', (function(marker, dateIterator) { 
+                            return function() {
+                              var content = Model.getExistingTask(dateIterator);
+                              infowindow.setContent(content);
+                              infowindow.open(map, marker);
+                            }
+                    })(marker, dateIterator));  //end of Listener
+                }   //end of if loop
+               }   //end of for loop
+           }
+
+    function onSliderMove( event, ui ) {
+          var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
+          console.log("currentMonth in createslideris now",currentMonthName);
+          $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
+          }
+
+    function onSliderStart( event, ui ) {
+                      $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                   }
+
+    function onSliderStop( event, ui ) {
+                    View.clearTasksInSliderView();
+                    $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
+                    var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
+                    View.showTasksInRange(tasksInRange);
+                    View.createMultipleMarkers(ui.values[0],ui.values[1]);
+  
+                    }  //end of slider stop function               
+
+    function createSlider(sliderWidth)  {
+        $("#slider-range").slider({
+          range: true,
+          min: 1,
+          max: sliderWidth,       
+          values:[1,20], 
+          step:1,
+          slide: onSliderMove(event, ui),
+          start: onSliderStart(event,ui),
+          stop: onSliderStop(event, ui)
+          });    
+      }
   
   return {
     changeFormToVisible: changeFormToVisible,
@@ -170,16 +260,20 @@ var View = (function () {
     clearTasksInSliderView:clearTasksInSliderView,
     createGridOfDatesView:createGridOfDatesView,
     createPageHeader:createPageHeader,
+    createMultipleMarkers:createMultipleMarkers,
+    createSlider:createSlider,
     displayTaskText:displayTaskText,
     displayStarterMap:displayStarterMap,
     displayTasksInSelection:displayTasksInSelection,
     hideSummaryMap:hideSummaryMap,
     highlightDate:highlightDate,
+    setMapOnForm:setMapOnForm,
     setTodayHighlight:setTodayHighlight,
     setWeekdayLabelsToColumns:setWeekdayLabelsToColumns, 
     setArrayValuesToTablePosition:setArrayValuesToTablePosition,
     showPostcodeCoordinates:showPostcodeCoordinates,
     showMapView:showMapView,
+    showTasksInRange:showTasksInRange,
     unHighlightDate:unHighlightDate
   };
   

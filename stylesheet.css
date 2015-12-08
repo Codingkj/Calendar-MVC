@@ -28,7 +28,7 @@
 .highlight {
   background-color: yellow; }
 
-#textbox4 {
+#textBox4 {
   display: inline-block;
   width: 25vw;
   background-color: white;
@@ -155,7 +155,7 @@
 
 #editbutton {
   position: relative;
-  left: 12vw;
+  left: 8vw;
   width: 8vw;
   height: 2vw;
   color: blue;
@@ -164,7 +164,7 @@
 
 #closebutton {
   position: relative;
-  left: 32vw;
+  left: 28vw;
   width: 8vw;
   height: 2vw;
   color: green;
@@ -173,7 +173,7 @@
 
 #removebutton {
   position: relative;
-  left: -8vw;
+  left: -12vw;
   width: 8vw;
   height: 2vw;
   color: black;
@@ -206,6 +206,9 @@
   width: 60vw;
   background-color: #ffcce6;
   height: 30vw; }
+
+#divTaskEditForm {
+  background-color: #ff9999; }
 
 #mapDiv1 {
   width: 70vw;
@@ -261,7 +264,9 @@
   background: #ffcce6;
   border-style: solid;
   border-color: blue;
-  border-width: 2px; }
+  border-width: 2px;
+  right: 1vw;
+  top: -2vw; }
 
 .coordsbox {
   width: 30%; }

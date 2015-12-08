@@ -26,34 +26,34 @@ var Utilities = (function () {
     return today;
   }
 
-  function createGoogleMap(latitude,longitude,mapContainer){
-        console.log("data received, lat, long, mapContainer",latitude, longitude,mapContainer);
+  // function createGoogleMap(latitude,longitude,mapContainer){
+  //       console.log("data received, lat, long, mapContainer",latitude, longitude,mapContainer);
 
-        var divIwant=document.getElementById('mapTaskEntry');
-        console.log("div i want",divIwant);
+  //       var divIwant=document.getElementById('mapTaskEntry');
+  //       console.log("div i want",divIwant);
      
-        var map = new google.maps.Map(document.getElementById('mapTaskEntry'),{
-          zoom:12,
-          center:new google.maps.LatLng(latitude,longitude)});
+  //       var map = new google.maps.Map(document.getElementById('mapTaskEntry'),{
+  //         zoom:12,
+  //         center:new google.maps.LatLng(latitude,longitude)});
 
-        var marker = new google.maps.Marker({
-                    position:{lat: longitude, lng: longitude},
-                    map: map,
-                    title: 'Your task is here!',
-                   });  
-  }
+  //       var marker = new google.maps.Marker({
+  //                   position:{lat: longitude, lng: longitude},
+  //                   map: map,
+  //                   title: 'Your task is here!',
+  //                  });  
+  // }
 
 
 // mapSummaryDiv
 
   function createGoogleMap(latitude,longitude,mapContainer){
-      
+      debugger;
       console.log("lat-lng passed into createGoogleMap...",latitude,longitude,mapContainer); 
       var mapOptions={ 
             center:new google.maps.LatLng(latitude,longitude),
             zoom:12   };
-     
-      var map = new google.maps.Map(document.getElementById("mapTaskEntry"),mapOptions);
+     debugger;
+      var map = new google.maps.Map(document.getElementById(mapContainer),mapOptions);
       console.log('map is...',map);
     return map;
   }
@@ -66,6 +66,18 @@ var Utilities = (function () {
             zoom:12   };
      
       var map = new google.maps.Map(document.getElementById("mapSummaryDiv"),mapOptions);
+      console.log('map is...',map);
+    return map;
+  }
+
+   function createGoogleMap3(latitude,longitude,mapContainer){
+      
+      console.log("lat-lng passed into createGoogleMap3...",latitude,longitude,mapContainer); 
+      var mapOptions={ 
+            center:new google.maps.LatLng(latitude,longitude),
+            zoom:12   };
+     
+      var map = new google.maps.Map(document.getElementById("mapTaskEdit"),mapOptions);
       console.log('map is...',map);
     return map;
   }
