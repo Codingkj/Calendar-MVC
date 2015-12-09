@@ -22,7 +22,7 @@ var View = (function () {
     } 
 
     function hideSummaryMap(){
-        $('#formDiv2').addClass("hidden").removeClass("mapsurround2");
+        $('#divMapViewForm').addClass("hidden").removeClass("mapsurround2");
     }
 
     function createGridOfDatesView(parentElement){
@@ -53,27 +53,32 @@ var View = (function () {
     function displayTaskText(taskText){
       $('#storedTextId').text(taskText);
     }
-    function displayTasksInSelection(iterator,startDate,stopDate){
-      var $selectedTask = Model.getExistingTask(iterator);
-      if ($selectedTask !== ""){
-            
-            $textBox4=$('<div id="textBox4"></div>');
-            $ptext4=$('<p></p>').val="";
-            console.log("task text",$selectedTask);
-            $lineBr=$('<br></br>'); 
-            $textBox4.append(iterator," Nov: ",$selectedTask).append($lineBr);
-            $('#taskDiv').append($textBox4);  
-            $('#taskDiv').append($lineBr);
-            $('#taskDiv').append($lineBr);
-            }
+    function showTasksInSelection(startDate,stopDate){
+      console.log('startDate is..',startDate);
+      console.log('stopdate is..',stopDate)
+      for (var counter=startDate;counter<stopDate+1;counter++){
+          var selectedTask = Model.getExistingTask(counter);
+          if (selectedTask !== ""){
+                
+                $textBox4=$('<div id="textBox4"></div>');
+                $ptext4=$('<p></p>').val="";
+                console.log("task text",selectedTask);
+                $lineBr=$('<br></br>'); 
+                var monthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
+                $textBox4.append(counter + ' ' + monthName + ' ' + selectedTask).append($lineBr);
+                $('#taskDiv').append($textBox4);  
+                $('#taskDiv').append($lineBr);
+                $('#taskDiv').append($lineBr);
+                }
+          }
     }
 
     function setTodayHighlight(DateToHighlight){
       var alldates = document.getElementsByClassName("active");
       for (var counter=0; counter < alldates.length;counter++){
         if (alldates[counter].innerHTML == DateToHighlight){
-          var selectedDate = alldates[counter];
-          selectedDate.setAttribute("class","todaysdate");
+          var selectedBox = alldates[counter];
+          selectedBox.setAttribute("class","todaysdate");
         }  
       }
     }
@@ -130,7 +135,9 @@ var View = (function () {
       }
 
     function showMapView(){
-        $('#formDiv2').addClass("mapsurround2").removeClass("hidden");
+        var formToChange = $('#divMapViewForm');
+        formToChange.addClass('mapsurround2').removeClass("hidden");
+
     }
 
     function displayStarterMap(latitude,longitude){  //could use CreateGoogleMap instead
@@ -160,8 +167,7 @@ var View = (function () {
       });   
     }   
 
-    function setMapOnForm(formToChange){
-      
+    function setMapOnForm(formToChange){    
       var dateSelected = Model.getDateSelected();
       if (formToChange === 'divTaskEditForm'){
             var locationSelected = Model.getExistingLocation(dateSelected);
@@ -189,10 +195,10 @@ var View = (function () {
 
     function createMultipleMarkers(startDate,stopDate){
             var marker; 
-            var firstTime = true;
+            var firstTime = 1;
             var infowindow = new google.maps.InfoWindow();   
             var map;
-            for (var dateIterator=startDate; dateIterator<stopDate+1; dateIterator++){
+            for (var dateIterator=startDate; dateIterator<stopDate; dateIterator++){
                 var dateWithTask = Model.getExistingTask(dateIterator);
                 if (dateWithTask !== ""){
                     console.log("date iterator is now",dateIterator);
@@ -200,15 +206,12 @@ var View = (function () {
                     var latitude = coords[0];
                     var longitude = coords[1];
                     // mapContainer = $('#mapSummaryDiv');
-                    console.log("Passed to map",latitude,longitude,mapContainer);
-                    if (firstTime === true) {
+                    console.log("Passed to map",latitude,longitude);
+                    if (firstTime === 1) {
                         map = Utilities.createGoogleMap(latitude,longitude,'mapSummaryDiv');
-                        firstTime = false;
+                        firstTime = 2;
                     }
                     marker = Utilities.createMapMarker(latitude,longitude,map);    
-                    View.displayTasksInSelection(dateIterator, ui.values[0],ui.values[1]);
-                    var numTasks = numTasks+1;
-                    
                     google.maps.event.addListener(marker, 'click', (function(marker, dateIterator) { 
                             return function() {
                               var content = Model.getExistingTask(dateIterator);
@@ -220,37 +223,54 @@ var View = (function () {
                }   //end of for loop
            }
 
-    function onSliderMove( event, ui ) {
-          var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
-          console.log("currentMonth in createslideris now",currentMonthName);
-          $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
-          }
+    // function onSliderMove( event, ui ) {
+    //       var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
+    //       console.log("currentMonth in createslideris now",currentMonthName);
+    //       $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
+    //       }
 
-    function onSliderStart( event, ui ) {
-                      $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                   }
+    // function onSliderStart( event, ui ) {
+    //                   $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+    //                }
 
-    function onSliderStop( event, ui ) {
-                    View.clearTasksInSliderView();
-                    $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
-                    var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
-                    View.showTasksInRange(tasksInRange);
-                    View.createMultipleMarkers(ui.values[0],ui.values[1]);
+    // function onSliderStop( event, ui ) {
+    //                 View.clearTasksInSliderView();
+    //                 $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
+    //                 var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
+    //                 View.showTasksInRange(tasksInRange);
+    //                 View.createMultipleMarkers(ui.values[0],ui.values[1]);
   
-                    }  //end of slider stop function               
+    //                 }  //end of slider stop function               
 
     function createSlider(sliderWidth)  {
+        $(function(){
         $("#slider-range").slider({
           range: true,
           min: 1,
           max: sliderWidth,       
           values:[1,20], 
           step:1,
-          slide: onSliderMove(event, ui),
-          start: onSliderStart(event,ui),
-          stop: onSliderStop(event, ui)
-          });    
+          slide: function onSliderMove(event, ui){
+
+                  var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
+                  console.log("currentMonth in createslideris now",currentMonthName);
+                  $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
+                  },
+          start: function onSliderStart(event,ui){
+                  $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                  },
+          stop: function onSliderStop(event, ui){
+                  View.clearTasksInSliderView();
+                  $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
+                  var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
+                  View.showTasksInRange(tasksInRange);
+                  View.createMultipleMarkers(ui.values[0],ui.values[1]);
+                  }   
+            });  
+          });  
       }
+
+      
   
   return {
     changeFormToVisible: changeFormToVisible,
@@ -264,7 +284,7 @@ var View = (function () {
     createSlider:createSlider,
     displayTaskText:displayTaskText,
     displayStarterMap:displayStarterMap,
-    displayTasksInSelection:displayTasksInSelection,
+    
     hideSummaryMap:hideSummaryMap,
     highlightDate:highlightDate,
     setMapOnForm:setMapOnForm,
@@ -274,6 +294,7 @@ var View = (function () {
     showPostcodeCoordinates:showPostcodeCoordinates,
     showMapView:showMapView,
     showTasksInRange:showTasksInRange,
+    showTasksInSelection:showTasksInSelection,
     unHighlightDate:unHighlightDate
   };
   

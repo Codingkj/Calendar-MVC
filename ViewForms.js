@@ -46,13 +46,13 @@ var ViewForms = (function () {
   }
 
   function createMapView(parentElement){  //I think this is a mixture of DOM and view stuff.
-    var $formDiv2=$('<div id="formDiv2" class="hidden"></div>');  // 
+    var $divMapViewForm=$('<div id="divMapViewForm" class="hidden"></div>');  // 
     var $mapForm2 = $('<form id="mapform2"></form>'); 
     var $formHeader2=$('<p id="mapheader">December Tasks by Map</p>'); 
 
     var $goBackField=$('<button id="gobackbutton" type="button">Go back to calendar view</button>'); 
     $formHeader2.append($goBackField);
-    $formDiv2.append($formHeader2);
+    $divMapViewForm.append($formHeader2);
     var $sliderContainer=$('<div id="slider-range"></div>');
     
     var $sliderText3=$('<p id="textbar"></p>');
@@ -72,8 +72,8 @@ var ViewForms = (function () {
 
     var $taskDiv=$('<div id="taskDiv"></div>');
     $mapForm2.append($taskDiv);
-    $formDiv2.append($mapForm2);
-    parentElement.append($formDiv2);  
+    $divMapViewForm.append($mapForm2);
+    parentElement.append($divMapViewForm);  
   }
   
   return {

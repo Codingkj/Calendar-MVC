@@ -36,7 +36,6 @@ $(function controllerSupremo(){
     View.createPageHeader(currentMonthName,currentYearNumber,bodyElement);
     View.createGridOfDatesView(bodyElement);
     Model.createWeekdayLabelCells(gridElement);
-   // createInitialPageView(currentMonthName);
 
     var dayHeaderCells = Model.getWeekdayCells();
     var weekdayLabels = Model.getWeekdayLabels();
@@ -48,19 +47,16 @@ $(function controllerSupremo(){
     Model.initialiseLocationsStorageArray(numDaysInMonth);
     
     var startCell = Model.getStartCell(currentMonthName);
-    
     var daysToUse = Model.setBlanksAtStartOfMonth(currentMonthName,startCell); 
-    
-    var daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth(currentMonthName,daysToUse,numDaysInMonth,startCell)   
-    var allCellsForDates = View.setArrayValuesToTablePosition(daysToUseWithBlanksAdded);   
-  
+    var daysToUseWithBlanksAdded = Model.setNumbersToRestOfMonth(currentMonthName,daysToUse,numDaysInMonth,startCell);
+    var allCellsForDates = View.setArrayValuesToTablePosition(daysToUseWithBlanksAdded); 
+
     var dateToHighlight = Utilities.findTodaysDate(); 
-  
     View.setTodayHighlight(dateToHighlight);
+
     ViewForms.createTaskEntryForm(bodyElement);
     ViewForms.createTaskEditForm(bodyElement);
     ViewForms.createMapView(bodyElement);
-  
   
   //  .on( "click", handler )
 
@@ -78,7 +74,6 @@ $(function controllerSupremo(){
     $("#mapViewButton").on('click',ViewEvents.showSummaryMap); 
 
      });
-
 
 </script>
 </body>
