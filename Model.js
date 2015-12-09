@@ -32,6 +32,10 @@ var Model = (function () {
     console.log("TaskEntries are now",taskEntries);
   }
 
+  function removeTaskEntry(dateSelected){
+    taskEntries[dateSelected] = "";
+  }
+
   function setDateSelected(dateSelected){
     currentdateSelected = dateSelected;
     console.log("Date now set as..",currentdateSelected);
@@ -156,24 +160,24 @@ var Model = (function () {
   return {
     initialiseTaskStorageArray: initialiseTaskStorageArray,
     initialiseLocationsStorageArray:initialiseLocationsStorageArray,
-    storeCoordsForLocation:storeCoordsForLocation,
-    storeTaskEntry:storeTaskEntry,
+    clearTaskText:clearTaskText,
+    createWeekdayLabelCells:createWeekdayLabelCells,
     getColumns:getColumns,
     getWeekdayLabels:getWeekdayLabels,
     getWeekdayCells:getWeekdayCells,
     getExistingTask:getExistingTask,
-    setTask:setTask,
-    createWeekdayLabelCells:createWeekdayLabelCells,
-    // getTodayCell:getTodayCell,
-    setBlanksAtStartOfMonth:setBlanksAtStartOfMonth,
-    setNumbersToRestOfMonth:setNumbersToRestOfMonth,
-    clearTaskText:clearTaskText,
     getTodaysCellOnCalendar:getTodaysCellOnCalendar,
     getNumberOfTasksInRange:getNumberOfTasksInRange,
     getExistingLocation:getExistingLocation,
-    setDateSelected:setDateSelected,
     getDateSelected:getDateSelected,
     getStartCell:getStartCell,
+    removeTaskEntry:removeTaskEntry,
+    setTask:setTask,
+    setDateSelected:setDateSelected,
+    setBlanksAtStartOfMonth:setBlanksAtStartOfMonth,
+    setNumbersToRestOfMonth:setNumbersToRestOfMonth,
+    storeCoordsForLocation:storeCoordsForLocation,
+    storeTaskEntry:storeTaskEntry,
   };
   
 })();

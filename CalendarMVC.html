@@ -57,12 +57,12 @@ $(function controllerSupremo(){
     ViewForms.createTaskEntryForm(bodyElement);
     ViewForms.createTaskEditForm(bodyElement);
     ViewForms.createMapView(bodyElement);
+
+    // View.createInitialMaps();
   
   //  .on( "click", handler )
-
-    $('.todaysdate').on('click',ViewEvents.showClickedOnDate);
-    $('.active').on('click',ViewEvents.showClickedOnDate);
-
+  
+    $('[data-active]').on('click',ViewEvents.showClickedOnDate);
     $('#submitbutton').on('click',ViewEvents.saveTaskEntry);
     $('#cancelbutton').on('click',ViewEvents.cancelTaskEntry);
     $('#closebutton').on('click',ViewEvents.closeEditForm);  

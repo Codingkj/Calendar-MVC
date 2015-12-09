@@ -47,13 +47,16 @@ var Utilities = (function () {
 // mapSummaryDiv
 
   function createGoogleMap(latitude,longitude,mapContainer){
-      debugger;
+     
       console.log("lat-lng passed into createGoogleMap...",latitude,longitude,mapContainer); 
+    
       var mapOptions={ 
             center:new google.maps.LatLng(latitude,longitude),
             zoom:12   };
-     debugger;
+    
       var map = new google.maps.Map(document.getElementById(mapContainer),mapOptions);
+      
+      google.maps.event.trigger(document.getElementById(mapContainer), 'resize');
       console.log('map is...',map);
     return map;
   }

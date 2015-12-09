@@ -35,7 +35,7 @@ var View = (function () {
       for (var counter=0; counter < checkdates.length;counter++){
           if (checkdates[counter].innerHTML == date.toString()){
              var selectedDate = checkdates[counter];
-             selectedDate.setAttribute('class','shaded');
+             $(selectedDate).attr('class','shaded');
           }
       }
     } 
@@ -45,7 +45,7 @@ var View = (function () {
         for (var counter=0; counter < checkdates.length;counter++){
             if (checkdates[counter].innerHTML == date.toString()){
               var selectedDate = checkdates[counter];
-              selectedDate.setAttribute('class','unshaded');
+              $(selectedDate).attr('class','unshaded');
             }
         }
     }
@@ -53,6 +53,7 @@ var View = (function () {
     function displayTaskText(taskText){
       $('#storedTextId').text(taskText);
     }
+
     function showTasksInSelection(startDate,stopDate){
       console.log('startDate is..',startDate);
       console.log('stopdate is..',stopDate)
@@ -73,13 +74,25 @@ var View = (function () {
           }
     }
 
-    function setTodayHighlight(DateToHighlight){
-      var alldates = document.getElementsByClassName("active");
-      for (var counter=0; counter < alldates.length;counter++){
-        if (alldates[counter].innerHTML == DateToHighlight){
+    // function setTodayHighlight(DateToHighlight){
+    //   var alldates = document.getElementsByClassName("active");
+    //   for (var counter=0; counter < alldates.length;counter++){
+    //     if (alldates[counter].innerHTML == DateToHighlight){
+    //       var selectedBox = alldates[counter];
+    //       selectedBox.setAttribute("class","todaysdate");
+        
+    //     }  
+    //   }
+    // }
+
+    function setTodayHighlight(dateToHighlight){
+      var alldates = $('[class="active"]');
+      for (var counter=0; counter<alldates.length;counter++){
+        if (alldates[counter].textContent == dateToHighlight){
           var selectedBox = alldates[counter];
-          selectedBox.setAttribute("class","todaysdate");
-        }  
+          $(selectedBox).attr('data-active','');
+          $(selectedBox).attr('class','todaysdate');
+        }
       }
     }
 
@@ -140,6 +153,25 @@ var View = (function () {
 
     }
 
+    function createInitialMaps(){
+        var mapContainers = [];
+        var mapContainer1 = 'mapTaskEntry';
+        var mapContainer2 = 'mapTaskEdit';
+        var mapContainer3 = 'mapSummaryDiv';
+
+
+        var latitude = 51.4996829;
+        var longitude = -0.0845579;
+
+        mapContainers.push(mapContainer1);
+        mapContainers.push(mapContainer2);
+        mapContainers.push(mapContainer3);
+
+        for (var count=0;count<mapContainers.length;count++){
+           Utilities.createGoogleMap(latitude,longitude,mapContainers[count])
+        }
+      }
+
     function displayStarterMap(latitude,longitude){  //could use CreateGoogleMap instead
         var mapOptions={ 
             center:new google.maps.LatLng(latitude,longitude),
@@ -162,7 +194,8 @@ var View = (function () {
           if(!(index%NUMBER_OF_COLUMNS)) tableRow = $('<tr>');
           
           cell = $('<td>').html(daysToUse[index]);
-          cell.addClass('active');
+          $(cell).addClass('active');
+          $(cell).attr('data-active','');
           $('#grid').append(tableRow.append(cell)); 
       });   
     }   
@@ -175,9 +208,8 @@ var View = (function () {
             console.log('locationSelected 0....',locationSelected[0]);
             var latitude = locationSelected[0];
             var longitude = locationSelected[1];
-            if (locationSelected !== ""){
-              Utilities.createGoogleMap(latitude,longitude,'mapTaskEdit');
-            } 
+            Utilities.createGoogleMap(latitude,longitude,'mapTaskEdit');
+           
             return;
       }
       var latitude = 51.4996829;
@@ -279,6 +311,7 @@ var View = (function () {
     chooseAFormToDisplay:chooseAFormToDisplay,
     clearTasksInSliderView:clearTasksInSliderView,
     createGridOfDatesView:createGridOfDatesView,
+    createInitialMaps:createInitialMaps,
     createPageHeader:createPageHeader,
     createMultipleMarkers:createMultipleMarkers,
     createSlider:createSlider,

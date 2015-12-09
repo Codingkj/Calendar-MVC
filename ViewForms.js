@@ -10,8 +10,8 @@ var ViewForms = (function () {
     var $textField=$('<textarea id="taskWords" name="textFieldname"></textarea>');
     $textField.addClass("textbox");
     $taskForm.append($textField);
-    var $mapDiv1=$('<div id="mapTaskEntry" class="mapStyle"></div>');
-    $taskForm.append($mapDiv1);
+    var $mapTaskEntry=$('<div id="mapTaskEntry" class="mapStyle"></div>');
+    $taskForm.append($mapTaskEntry);
  
     var $findButton=$('<button id="findbutton" type="button">FIND</button>');
     var $postcodeLabel=$('<p class="pcode">Enter Postcode for task (if there is one):</p>');
@@ -45,7 +45,7 @@ var ViewForms = (function () {
 
   }
 
-  function createMapView(parentElement){  //I think this is a mixture of DOM and view stuff.
+  function createMapView(parentElement){  
     var $divMapViewForm=$('<div id="divMapViewForm" class="hidden"></div>');  // 
     var $mapForm2 = $('<form id="mapform2"></form>'); 
     var $formHeader2=$('<p id="mapheader">December Tasks by Map</p>'); 
@@ -53,8 +53,8 @@ var ViewForms = (function () {
     var $goBackField=$('<button id="gobackbutton" type="button">Go back to calendar view</button>'); 
     $formHeader2.append($goBackField);
     $divMapViewForm.append($formHeader2);
-    var $sliderContainer=$('<div id="slider-range"></div>');
-    
+
+    var $sliderContainer=$('<div id="slider-range"></div>'); 
     var $sliderText3=$('<p id="textbar"></p>');
     var $sliderSlideInput=$('<input id="slidevalue" type="text" class="sliderStyle"></input>');
     var $lineBr=$('<br></br>'); 
