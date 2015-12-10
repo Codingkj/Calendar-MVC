@@ -50,7 +50,7 @@ var ViewForms = (function () {
     var $mapForm2 = $('<form id="mapform2"></form>'); 
     var $formHeader2=$('<p id="mapheader">December Tasks by Map</p>'); 
 
-    var $goBackField=$('<button id="gobackbutton" type="button">Go back to calendar view</button>'); 
+    var $goBackField=$('<button id="gobackbutton" type="button">Go to calendar view</button>'); 
     $formHeader2.append($goBackField);
     $divMapViewForm.append($formHeader2);
 

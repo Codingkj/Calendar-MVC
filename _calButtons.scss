@@ -17,14 +17,15 @@
   width:15vw;
 }
 #gobackbutton{
-  position:relative;
-  left:3vw;
+  position:absolute;
+  float:right;
   top:3vw;
-  display:inline;
-  width:7vw;
+  right:5vw;
+  width:15vw;
   color: blue;
-  height: 2vw;
-  margin-top: 1vw;
+  height: 3vw;
+  font-weight: 400;
+  font-size: 1.5vw;
 }
 #taskForm{
   width:50vw;

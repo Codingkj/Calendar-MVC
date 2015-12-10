@@ -6,6 +6,7 @@ var Model = (function () {
   var taskEntries = {};
   var locationsArray = [];
   var currentdateSelected = "";
+  var mapMarkers = {};
 
   function initialiseTaskStorageArray(numDaysInMonth){  
     for (var counter = 1; counter < numDaysInMonth+1; counter++){
@@ -21,7 +22,6 @@ var Model = (function () {
   }
 
   function storeCoordsForLocation(dateSelected,latitude,longitude){
-    console.log("got to store coords...",dateSelected,latitude,longitude);
     console.log("locationsArray is..",locationsArray);
     locationsArray[dateSelected] = [latitude,longitude];
     console.log("stored locations are now",locationsArray);

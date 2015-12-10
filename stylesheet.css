@@ -28,17 +28,21 @@
 .highlight {
   background-color: yellow; }
 
+.task-list {
+  display: block;
+  font: 1vw Helvetica, Arial;
+  text-align: left;
+  display: block;
+  top: 14vw; }
+
 #textBox4 {
-  display: inline-block;
-  width: 25vw;
+  width: 35vw;
   background-color: white;
-  margin-left: 2vw;
+  margin-left: 6vw;
+  margin-top: 1vw;
   border-color: black;
   border-style: solid;
   border-width: 2px;
-  text-align: left;
-  margin-left: 1vw;
-  font-size: 1vw;
   padding: 2vw; }
 
 .pcode {
@@ -113,14 +117,15 @@
   width: 15vw; }
 
 #gobackbutton {
-  position: relative;
-  left: 3vw;
+  position: absolute;
+  float: right;
   top: 3vw;
-  display: inline;
-  width: 7vw;
+  right: 5vw;
+  width: 15vw;
   color: blue;
-  height: 2vw;
-  margin-top: 1vw; }
+  height: 3vw;
+  font-weight: 400;
+  font-size: 1.5vw; }
 
 #taskForm {
   width: 50vw; }
@@ -192,20 +197,20 @@
 #taskdiv {
   width: 40vw;
   height: 20vw;
-  position: absolute;
+  position: relative;
   top: 15vw;
   left: 2vw; }
 
 #divMapViewForm {
-  width: 70vw;
-  background-color: #A1D490;
-  height: 40vw; }
+  width: 100%;
+  background-color: #A1D490; }
 
 #slider-range {
   background-color: orange;
-  width: 30vw;
+  width: 40vw;
   position: relative;
-  left: 2vw; }
+  left: 5vw;
+  top: -3vw; }
 
 #divTaskEntryForm {
   width: 60vw;
@@ -239,9 +244,12 @@
 .mapStyle2 {
   background-color: yellow;
   height: 30vw;
-  width: 35vw;
+  width: 45vw;
   float: right;
-  position: relative; }
+  border-color: blue;
+  border-style: solid;
+  border-width: 2px;
+  right: 2vw; }
 
 .mapStyle3 {
   height: 20vw;
@@ -253,7 +261,7 @@
   border-color: blue;
   border-width: 2px;
   right: 1vw;
-  top: -6vw; }
+  top: -vw; }
 
 .coordsbox {
   width: 30%; }
@@ -261,14 +269,10 @@
 .mapsurround2 {
   display: inline;
   position: absolute;
-  top: 5vw;
-  left: 10vw;
-  float: left;
+  top: 0.0vw;
   border-style: solid;
   border-color: black;
-  background-color: yellow;
-  width: 60vw;
-  height: 30vw; }
+  background-color: yellow; }
 
 #mapTaskEntry {
   border-color: blue;

@@ -31,8 +31,7 @@ var ViewEvents = (function () {
             taskEditFormShown = true;
         }   
       }
-        
-       
+  
         var taskTextOnDate = Model.getExistingTask(dateSelected);
         View.displayTaskText(taskTextOnDate);
         View.highlightDate(dateSelected);
@@ -109,12 +108,15 @@ var ViewEvents = (function () {
         event.preventDefault(); 
         event.stopPropagation();
         console.log("got here too!!!!"); 
-
+        View.createTaskListing();
+        View.showTaskListing(1,31);
         // View.displayStarterMap(51.4996829,-0.0845579);
-        View.showMapView();
+        var map = View.showMapView();
+        
         
         var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
         // View.createSlider(sliderWidth);
+
         $ (function() {
         $("#slider-range").slider({
           range: true,
@@ -124,30 +126,36 @@ var ViewEvents = (function () {
           step:1,
             slide: function( event, ui ) {
                       $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
+                      View.showTaskListing(ui.values[0],ui.values[1]);
                    },
             start: function( event, ui ) {
                       $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                      
                    },
             stop: function( event, ui ) {
-                    View.clearTasksInSliderView();
+
+                    // View.clearTasksInSliderView();
                     $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
-                        var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
-                        View.showTasksInRange(tasksInRange);
-                        View.showTasksInSelection(ui.values[0],ui.values[1]);
-                        View.createMultipleMarkers(ui.values[0],ui.values[1]);
+                        // var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
+                        // View.showTasksInRange(tasksInRange);
 
-                        var marker; 
-                        var infowindow = new google.maps.InfoWindow();
+                        View.showTaskListing(ui.values[0],ui.values[1]);
+                        View.createMultipleMarkers(ui.values[0],ui.values[1],map);
 
-                        for (var iterator=ui.values[ 0 ];iterator<ui.values[1]; iterator++){
+                        // var marker; //no value of markers here.
+                        // var infowindow = new google.maps.InfoWindow();
 
-                            google.maps.event.addListener(marker, 'click', (function(marker, iterator) {
-                                    return function() {
-                                      infowindow.setContent(taskEntries[iterator]);
-                                      infowindow.open(map, marker);
-                                }
-                            })(marker, iterator));
-                        }   //end of for loop
+                        // for (var iterator=ui.values[ 0 ];iterator<ui.values[1]; iterator++){
+
+                        //     google.maps.event.addListener(marker, 'click', (function(marker, iterator) {
+                             
+                        //             return function() {
+
+                        //               infowindow.setContent(taskEntries[iterator]);
+                        //               infowindow.open(map, marker);
+                        //         }
+                        //     })(marker, iterator));
+                        // }   //end of for loop
                           
                     },  //end of slider stop function
                 }); //end of .slider function
@@ -158,13 +166,15 @@ var ViewEvents = (function () {
   return {
     cancelTaskEntry:cancelTaskEntry,
     closeEditForm:closeEditForm,
+   
     findPostcode:findPostcode,
     removeTask:removeTask,
     returnToCalendarScreen:returnToCalendarScreen,
     showClickedOnDate:showClickedOnDate,
     saveTaskEntry:saveTaskEntry,
     showEditForm:showEditForm,
-    showSummaryMap:showSummaryMap
+    showSummaryMap:showSummaryMap,
+   
   };
 
 

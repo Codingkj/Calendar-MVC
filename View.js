@@ -53,38 +53,7 @@ var View = (function () {
     function displayTaskText(taskText){
       $('#storedTextId').text(taskText);
     }
-
-    function showTasksInSelection(startDate,stopDate){
-      console.log('startDate is..',startDate);
-      console.log('stopdate is..',stopDate)
-      for (var counter=startDate;counter<stopDate+1;counter++){
-          var selectedTask = Model.getExistingTask(counter);
-          if (selectedTask !== ""){
-                
-                $textBox4=$('<div id="textBox4"></div>');
-                $ptext4=$('<p></p>').val="";
-                console.log("task text",selectedTask);
-                $lineBr=$('<br></br>'); 
-                var monthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
-                $textBox4.append(counter + ' ' + monthName + ' ' + selectedTask).append($lineBr);
-                $('#taskDiv').append($textBox4);  
-                $('#taskDiv').append($lineBr);
-                $('#taskDiv').append($lineBr);
-                }
-          }
-    }
-
-    // function setTodayHighlight(DateToHighlight){
-    //   var alldates = document.getElementsByClassName("active");
-    //   for (var counter=0; counter < alldates.length;counter++){
-    //     if (alldates[counter].innerHTML == DateToHighlight){
-    //       var selectedBox = alldates[counter];
-    //       selectedBox.setAttribute("class","todaysdate");
-        
-    //     }  
-    //   }
-    // }
-
+    
     function setTodayHighlight(dateToHighlight){
       var alldates = $('[class="active"]');
       for (var counter=0; counter<alldates.length;counter++){
@@ -111,7 +80,7 @@ var View = (function () {
       $divTop.append($pageHeader);
       parentElement.append($divTop);
     }
-    function clearTasksInSliderView(){
+    function clearTasksInSliderView(){     //don't think this is needed.
       $('#textBox4').val('');
     
     }
@@ -140,52 +109,91 @@ var View = (function () {
             Model.storeCoordsForLocation(dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
             console.log("after calling model.store",dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
         }   
-        console.log("before the xhr send command");
+        
         xhr.send();
-        console.log("after the xhr send command");
+        
         // return {};
        
       }
 
-    function showMapView(){
-        var formToChange = $('#divMapViewForm');
-        formToChange.addClass('mapsurround2').removeClass("hidden");
+ // $.each(daysToUse, function(index) {
+ //          if(!(index%NUMBER_OF_COLUMNS)) tableRow = $('<tr>');
+          
+ //          cell = $('<td>').html(daysToUse[index]);
+ //          $(cell).addClass('active');
+ //          $(cell).attr('data-active','');
 
+    function showTaskListing(startDate,stopDate){
+
+       var tasklist = $('[data-tasklisting]');
+
+       $.each(tasklist,function(index) {
+
+      
+       console.log("your item is..",$(this).attr('data-tasklisting'));
+      
+       console.log("startdate & stopdate: ",startDate,stopDate);
+      
+        // for (var count=startDate;count<stopDate+1;count++){
+          if (($(this).attr('data-tasklisting') >= startDate) && ($(this).attr('data-tasklisting') <= stopDate)){
+            console.log("value in range",index);
+     
+            $(this).removeClass('hidden').addClass('task-list'); 
+          }
+          else 
+          if ($(this).attr('data-tasklisting') < startDate) {
+            console.log("Date under range");
+            $(this).addClass('hidden').removeClass('task-list'); 
+          }
+          else
+          if ($(this).attr('data-tasklisting') > stopDate){
+            $(this).addClass('hidden').removeClass('task-list'); 
+          }
+      });
+     }
+
+    function hideTaskListing() {
+      var tasklist = $('[data-tasklisting]').addClass('hidden').removeClass('task-list'); 
+      // $('[data-tasklisting="show"]').attr(data-tasklisting,"hide")
+      
     }
 
-    function createInitialMaps(){
-        var mapContainers = [];
-        var mapContainer1 = 'mapTaskEntry';
-        var mapContainer2 = 'mapTaskEdit';
-        var mapContainer3 = 'mapSummaryDiv';
+    function createTaskListing(){
+      // get all tasks that are not blank, create a stylised Div for them class hidden.
+      var currentYear = Utilities.getYearNumber();
+      var currentMonth = Utilities.getCurrentMonthNumber();
+      var numDaysInMonth = Utilities.getDatesInCurrentMonth(currentYear,currentMonth);
+      console.log("Inside the createTaskListing");
+      for (var counter=1;counter<numDaysInMonth+1;counter++){
+          var selectedTask = Model.getExistingTask(counter);
+          if (selectedTask !== ""){
+                console.log("create me a task in listing");
+                $textBox4 = $('<div id="textBox4" class="task-list"></div>');
+                
+                $textBox4.attr('data-tasklisting', counter);
+                
+                // var ptext4 = $('<p></p>').val="";
+                var $lineBr = $('<br></br>'); 
+                $('#mapform2').append($lineBr).append($lineBr);
+                var monthName = Utilities.getMonthName(currentMonth);
+                $textBox4.append(counter + ' ' + monthName + ' ' + selectedTask).append($lineBr);
+              
+                $('#mapform2').append($textBox4);  
+                
+                }
+          // else { console.log("that task had nothing in it",counter)}
+          }
+    }
 
-
+    function showMapView(){
+        var formToChange = $('#divMapViewForm');
+        formToChange.addClass('mapsurround2').removeClass('hidden');
         var latitude = 51.4996829;
         var longitude = -0.0845579;
-
-        mapContainers.push(mapContainer1);
-        mapContainers.push(mapContainer2);
-        mapContainers.push(mapContainer3);
-
-        for (var count=0;count<mapContainers.length;count++){
-           Utilities.createGoogleMap(latitude,longitude,mapContainers[count])
-        }
-      }
-
-    function displayStarterMap(latitude,longitude){  //could use CreateGoogleMap instead
-        var mapOptions={ 
-            center:new google.maps.LatLng(latitude,longitude),
-            zoom:12   };
-
-        // var mylatlng = new google.maps.LatLng(latitude, longitude);
-        // console.log("mylatlng", mylatlng);
-        var map= new google.maps.Map(document.getElementById("mapSummaryDiv"),mapOptions);
-        var marker = new google.maps.Marker({
-                    position:{lat: longitude, lng: longitude},
-                    map: map,
-                    title: 'Your task is here!',
-                   });  
-  }
+        var mapCreatedinSummaryDiv = Utilities.createGoogleMap(latitude,longitude,'mapSummaryDiv');
+        //choosing not to put marker on it at this point until user operates slider.
+        return mapCreatedinSummaryDiv;
+    }
 
   function setArrayValuesToTablePosition(daysToUse){
     var NUMBER_OF_COLUMNS = 7; 
@@ -208,41 +216,29 @@ var View = (function () {
             console.log('locationSelected 0....',locationSelected[0]);
             var latitude = locationSelected[0];
             var longitude = locationSelected[1];
-            Utilities.createGoogleMap(latitude,longitude,'mapTaskEdit');
-           
+            var mapCreatedInTaskEdit = Utilities.createGoogleMap(latitude,longitude,'mapTaskEdit');
+            Utilities.createMapMarker(latitude,longitude,mapCreatedinSummaryDiv);
             return;
       }
       var latitude = 51.4996829;
       var longitude = -0.0845579;
-      Utilities.createGoogleMap(latitude,longitude,'mapTaskEntry');   
+      var mapCreatedInTaskEntry = Utilities.createGoogleMap(latitude,longitude,'mapTaskEntry');  
+      Utilities.createMapMarker(latitude,longitude,mapCreatedInTaskEntry); 
       } 
     
-    function showTasksInRange(tasksInRange){
-        var lineBr=$('<br></br>');
-        var taskShortDiv = $('#taskDiv');
-        taskShortDiv.append(lineBr);
-        var taskSummary = $('<p>There are '+ tasksInRange +' tasks in this range:</p>');
-        taskShortDiv.append(taskSummary);
-    }
 
-    function createMultipleMarkers(startDate,stopDate){
+    function createMultipleMarkers(startDate,stopDate,map){
             var marker; 
-            var firstTime = 1;
             var infowindow = new google.maps.InfoWindow();   
-            var map;
+           
             for (var dateIterator=startDate; dateIterator<stopDate; dateIterator++){
                 var dateWithTask = Model.getExistingTask(dateIterator);
                 if (dateWithTask !== ""){
-                    console.log("date iterator is now",dateIterator);
                     var coords = Model.getExistingLocation(dateIterator);
                     var latitude = coords[0];
                     var longitude = coords[1];
                     // mapContainer = $('#mapSummaryDiv');
-                    console.log("Passed to map",latitude,longitude);
-                    if (firstTime === 1) {
-                        map = Utilities.createGoogleMap(latitude,longitude,'mapSummaryDiv');
-                        firstTime = 2;
-                    }
+                    
                     marker = Utilities.createMapMarker(latitude,longitude,map);    
                     google.maps.event.addListener(marker, 'click', (function(marker, dateIterator) { 
                             return function() {
@@ -274,34 +270,7 @@ var View = (function () {
   
     //                 }  //end of slider stop function               
 
-    function createSlider(sliderWidth)  {
-        $(function(){
-        $("#slider-range").slider({
-          range: true,
-          min: 1,
-          max: sliderWidth,       
-          values:[1,20], 
-          step:1,
-          slide: function onSliderMove(event, ui){
-
-                  var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
-                  console.log("currentMonth in createslideris now",currentMonthName);
-                  $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
-                  },
-          start: function onSliderStart(event,ui){
-                  $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                  },
-          stop: function onSliderStop(event, ui){
-                  View.clearTasksInSliderView();
-                  $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
-                  var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
-                  View.showTasksInRange(tasksInRange);
-                  View.createMultipleMarkers(ui.values[0],ui.values[1]);
-                  }   
-            });  
-          });  
-      }
-
+    
       
   
   return {
@@ -311,13 +280,13 @@ var View = (function () {
     chooseAFormToDisplay:chooseAFormToDisplay,
     clearTasksInSliderView:clearTasksInSliderView,
     createGridOfDatesView:createGridOfDatesView,
-    createInitialMaps:createInitialMaps,
+  
     createPageHeader:createPageHeader,
     createMultipleMarkers:createMultipleMarkers,
-    createSlider:createSlider,
+    // createSlider:createSlider,
+    createTaskListing:createTaskListing,
     displayTaskText:displayTaskText,
-    displayStarterMap:displayStarterMap,
-    
+    hideTaskListing:hideTaskListing,
     hideSummaryMap:hideSummaryMap,
     highlightDate:highlightDate,
     setMapOnForm:setMapOnForm,
@@ -326,8 +295,7 @@ var View = (function () {
     setArrayValuesToTablePosition:setArrayValuesToTablePosition,
     showPostcodeCoordinates:showPostcodeCoordinates,
     showMapView:showMapView,
-    showTasksInRange:showTasksInRange,
-    showTasksInSelection:showTasksInSelection,
+    showTaskListing:showTaskListing,
     unHighlightDate:unHighlightDate
   };
   
