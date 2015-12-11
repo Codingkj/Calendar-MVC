@@ -80,7 +80,7 @@ var View = (function () {
       $divTop.append($pageHeader);
       parentElement.append($divTop);
     }
-    function clearTasksInSliderView(){     //don't think this is needed.
+    function removeTasksInSliderView(){     //don't think this is needed.
       $('#textBox4').val('');
     
     }
@@ -101,6 +101,7 @@ var View = (function () {
             var longitudeReturnedFromLookup= data.result.longitude;
 
             console.log('values are date,lat,lng',dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup);
+            View.removeStartMarker();
             var mapCreated = Utilities.createGoogleMap(latitudeReturnedFromLookup,longitudeReturnedFromLookup,'mapTaskEntry');
             var markerCreated = Utilities.createMapMarker(latitudeReturnedFromLookup, longitudeReturnedFromLookup ,mapCreated); 
             Model.storeMarker(dateSelected, markerCreated);
@@ -120,21 +121,35 @@ var View = (function () {
        $.each(tasklist,function(index) {
 
           if (($(this).attr('data-tasklisting') >= startDate) && ($(this).attr('data-tasklisting') <= stopDate)){
-            console.log("value in range",index);
+            console.log("task in range",index);
      
             $(this).removeClass('hidden').addClass('task-list'); 
           }
           else 
-          if ($(this).attr('data-tasklisting') < startDate) {
-            console.log("Date under range");
+          {
+            console.log("Date outside range");
             $(this).addClass('hidden').removeClass('task-list'); 
           }
-          else
-          if ($(this).attr('data-tasklisting') > stopDate){
-            $(this).addClass('hidden').removeClass('task-list'); 
+        });
+      }
+
+
+     function filterMarkers(startDate,stopDate){
+
+       var allMarkers = Model.getMarkers();
+       $.each(allMarkers,function(index) {        
+         
+          if ((index >= startDate) && (index <= stopDate)){
+              console.log("value in range",index);
+          }
+          else {
+            console.log("Date outside range");
+            allMarkers[index].setMap(null);
           }
       });
      }
+     
+
 
     function hideTaskListing() {
       var tasklist = $('[data-tasklisting]').addClass('hidden').removeClass('task-list'); 
@@ -170,12 +185,15 @@ var View = (function () {
     }
 
     function showMapView(){
-        var formToChange = $('#divMapViewForm');
-        formToChange.addClass('mapsurround2').removeClass('hidden');
+        var formToChange = $('#divMapViewForm'); 
+        formToChange.addClass('mapsurround2').removeClass('hidden'); 
+        
         var latitude = 51.4996829;
         var longitude = -0.0845579;
+      
         var mapCreatedinSummaryDiv = Utilities.createGoogleMap(latitude,longitude,'mapSummaryDiv');
-        var markerCreated = Utilities.createMapMarker(latitude,longitude,mapCreatedinSummaryDiv);
+        var starterMarker = Utilities.createMapMarker(latitude,longitude,mapCreatedinSummaryDiv);
+        Model.storeStartMarker(starterMarker);
         //don't call store as the markers have already been stored.
         return mapCreatedinSummaryDiv;
     }
@@ -210,7 +228,7 @@ var View = (function () {
       var longitude = -0.0845579;
       var mapCreatedInTaskEntry = Utilities.createGoogleMap(latitude,longitude,'mapTaskEntry');  
       var markerCreated = Utilities.createMapMarker(latitude,longitude,mapCreatedInTaskEntry); 
-     //DOn't store marker as user has not created this one.
+      var storedMarker = Model.storeStarterMarker(markerCreated);
       } 
     
 
@@ -218,8 +236,7 @@ var View = (function () {
             console.log("Inside MM");
             var markerCreated; 
             var infowindow = new google.maps.InfoWindow();   
-            console.log("Inside MM StartDate, StopDate",startDate,stopDate);
-            console.log("Inside MM - map value is ",map);
+            View.removeStartMarker();
             for (var dateIterator = startDate; dateIterator < stopDate+1; dateIterator++){
                 var dateWithTask = Model.getExistingTask(dateIterator);
                 if (dateWithTask !== ""){
@@ -227,7 +244,7 @@ var View = (function () {
                     var latitude = coords[0];
                     var longitude = coords[1];
                     // mapContainer = $('#mapSummaryDiv');
-                    console.log("inside MM lat,long values",latitude,longitude);
+                  
                     markerCreated = Utilities.createMapMarker(latitude,longitude,map); 
                     Model.storeMarker(dateIterator, markerCreated);   
                     google.maps.event.addListener(markerCreated, 'click', (function(markerCreated, dateIterator) { 
@@ -241,12 +258,23 @@ var View = (function () {
                }   //end of for loop
            }
 
-  function removeAllMarkers(){
-
+  
+  function removeAllMarkers(){  //to be called when user navigates back to calendar view.
     var markersToRemove = Model.getMarkers();
-    Utilities.removeMarkersFromMap(markersToRemove);
+    $.each(tasklist,function(index) {
+      markersToRemove[index].setMap(null);
+    });
+    View.filterMarkers(markersToRemove);
     Model.removeMarkersFromStorage(markersToRemove);
-  }
+    }
+
+  function removeStartMarker(){
+    marker = Model.getStarterMarker();
+    console.log(marker);
+    marker.setMap(null);   
+    Model.removeStarterMarker(marker);
+    }
+
 
     // function onSliderMove( event, ui ) {
     //       var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
@@ -259,23 +287,21 @@ var View = (function () {
     //                }
 
     // function onSliderStop( event, ui ) {
-    //                 View.clearTasksInSliderView();
+    //                 View.removeTasksInSliderView();
     //                 $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
     //                 var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
     //                 View.showTasksInRange(tasksInRange);
     //                 View.createMultipleMarkers(ui.values[0],ui.values[1]);
   
     //                 }  //end of slider stop function               
-
-    
-      
+   
   
   return {
     changeFormToVisible: changeFormToVisible,
     changeFormToHidden: changeFormToHidden,
     changeformHeader: changeformHeader,
     chooseAFormToDisplay:chooseAFormToDisplay,
-    clearTasksInSliderView:clearTasksInSliderView,
+    removeTasksInSliderView:removeTasksInSliderView,
     createGridOfDatesView:createGridOfDatesView,
   
     createPageHeader:createPageHeader,
@@ -283,10 +309,12 @@ var View = (function () {
     // createSlider:createSlider,
     createTaskListing:createTaskListing,
     displayTaskText:displayTaskText,
+    filterMarkers:filterMarkers,
     hideTaskListing:hideTaskListing,
     hideSummaryMap:hideSummaryMap,
     highlightDate:highlightDate,
     removeAllMarkers:removeAllMarkers,
+    removeStartMarker:removeStartMarker,
     setMapOnForm:setMapOnForm,
     setTodayHighlight:setTodayHighlight,
     setWeekdayLabelsToColumns:setWeekdayLabelsToColumns, 

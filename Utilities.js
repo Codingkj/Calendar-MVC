@@ -55,12 +55,13 @@ var Utilities = (function () {
       return marker; 
     }
 
-  function removeMarkersFromMap(mapMarkers){
-    console.log("Got to Utilities remove markers");
-    // $.each(mapMarkers,function(index) {
-    //   mapMarkers[index].setMap(null);
-    // });
-  }
+  // function removeMarkersFromMap(mapMarkers){
+  //   console.log("Got to Utilities remove markers");
+  //   $.each(mapMarkers,function(index) {
+  //     console.log("This in the for each loop fo removal of markers");
+  //     $mapMarkers[index].setMap(null);
+  //   });
+  // }
 
   function validateTaskEntry(taskText){
     if (taskText===""){
@@ -77,7 +78,7 @@ var Utilities = (function () {
     findTodaysDate:findTodaysDate,
     createGoogleMap:createGoogleMap,
     createMapMarker:createMapMarker,
-    removeMarkersFromMap:removeMarkersFromMap,
+    // removeMarkersFromMap:removeMarkersFromMap,
     validateTaskEntry:validateTaskEntry
   };
   

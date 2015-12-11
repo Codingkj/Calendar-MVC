@@ -7,6 +7,7 @@ var Model = (function () {
   var locationsArray = [];
   var currentdateSelected = "";
   var mapMarkers = {};
+  var firstMarker={};
 
   function initialiseTaskStorageArray(numDaysInMonth){  
     for (var counter = 1; counter < numDaysInMonth+1; counter++){
@@ -21,6 +22,18 @@ var Model = (function () {
         }    
   }
 
+  function createWeekdayLabelCells(gridElement){
+     $.each(DAY_NAMES, function (index) {
+        if (!(index % NUMBER_OF_COLUMNS)) {
+            tableRow = $('<tr>');
+        }
+
+        cell = $('<td>').html(DAY_NAMES[index]);
+        cell.addClass('firstrow');
+        $('#grid').append(tableRow.append(cell)); 
+      });
+   }
+
   function storeCoordsForLocation(dateSelected,latitude,longitude){
     console.log("locationsArray is..",locationsArray);
     locationsArray[dateSelected] = [latitude,longitude];
@@ -28,9 +41,22 @@ var Model = (function () {
   }
 
   function storeMarker(dateSelected,marker){
-    mapMarkers.date = dateSelected;
-    mapMarkers.marker = marker;
-    console.log("I'm storing marker for day ",dateSelected);
+    date = dateSelected;
+    mapMarkers[date] = marker;
+   
+    console.log("I'm storing marker for day ",mapMarkers[date]);
+  }
+
+  function storeStarterMarker(marker){
+    firstMarker = marker;
+  }
+
+  function getStarterMarker(){
+   return firstMarker;
+  }
+
+  function removeStarterMarker(marker){
+    firstMarker = null;
   }
 
   function storeTaskEntry(taskText,dateSelected){
@@ -42,7 +68,7 @@ var Model = (function () {
     taskEntries[dateSelected] = "";
   }
 
-  function removeMarkersFromStorage(){
+  function removeMarkersFromStorage(){  //not finished.
 //     var allMarkers = mapMarkers;
 //     $.each(allMarkers,function(index) {
 //     Model.storeMarker(dateSelected,null);
@@ -87,28 +113,11 @@ var Model = (function () {
     return taskEntries[dateSelected];
   }
 
-  function getExistingLocation(dateSelected){
-    {
+  function getExistingLocation(dateSelected){  
       var coords = [locationsArray[dateSelected][0],locationsArray[dateSelected][1]];
       return coords;
-    }
   }
-
-  function createWeekdayLabelCells(gridElement){
-
-     $.each(DAY_NAMES, function (index) {
-        if (!(index % NUMBER_OF_COLUMNS)) {
-            tableRow = $('<tr>');
-        }
-
-        cell = $('<td>').html(DAY_NAMES[index]);
-        cell.addClass('firstrow');
-        $('#grid').append(tableRow.append(cell)); 
-      });
-   }
-
-
-
+  
   function setBlanksAtStartOfMonth(currentMonthName,startCell){    
     var cellsThatCanHaveDates=$('datecell');    
     var daysToUse=[];
@@ -121,7 +130,6 @@ var Model = (function () {
   }
 
   function setNumbersToRestOfMonth(currentMonthName,daysToUse,numDaysInMonth,startCell){
-   
     var dayInTheMonthLabel=1;
     var cellsThatCanHaveDates=$('datecell'); 
 
@@ -175,14 +183,17 @@ var Model = (function () {
     getExistingLocation:getExistingLocation,
     getDateSelected:getDateSelected,
     getStartCell:getStartCell,
+    getStarterMarker:getStarterMarker,
     removeTaskEntry:removeTaskEntry,
     removeMarkersFromStorage:removeMarkersFromStorage,
+    removeStarterMarker:removeStarterMarker,
     setDateSelected:setDateSelected,
     setBlanksAtStartOfMonth:setBlanksAtStartOfMonth,
     setNumbersToRestOfMonth:setNumbersToRestOfMonth,
     storeCoordsForLocation:storeCoordsForLocation,
     storeMarker:storeMarker,
     storeTaskEntry:storeTaskEntry,
+    storeStarterMarker:storeStarterMarker,
   };
   
 })();

@@ -41,6 +41,7 @@ var ViewEvents = (function () {
         
         var textEntered = $('textarea').val(); 
         Utilities.validateTaskEntry(textEntered);
+        
         var dateSelected = Model.getDateSelected();
         Model.storeTaskEntry(textEntered,dateSelected);
     
@@ -87,8 +88,9 @@ var ViewEvents = (function () {
             event.preventDefault(); 
             event.stopPropagation();   
             var dateSelected = Model.getDateSelected(); 
-            View.hideSummaryMap();                        
-            View.clearTasksInSliderView();                             
+            View.hideSummaryMap();                       
+            View.removeTasksInSliderView();  
+            View.removeAllMarkers();                           
       }
 
       function findPostcode(event){
@@ -105,13 +107,17 @@ var ViewEvents = (function () {
         event.preventDefault(); 
         event.stopPropagation();
         console.log("got here too!!!!"); 
+        
         View.createTaskListing();
         View.showTaskListing(1,31);
         
         var mapCreated = View.showMapView();   
         var currentMonthNumber = Utilities.getCurrentMonthNumber();
         var daysInMonth = Utilities.getDatesInCurrentMonth(2015,currentMonthNumber);
+        var currentMonthName = Utilities.getMonthName(currentMonthNumber);
+        
         View.createMultipleMarkers(1,daysInMonth,mapCreated);
+        
 
         $ (function() {
         $("#slider-range").slider({
@@ -123,20 +129,20 @@ var ViewEvents = (function () {
             slide: function( event, ui ) {
                       $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
                       View.showTaskListing(ui.values[0],ui.values[1]);
+                      View.filterMarkers(ui.values[0],ui.values[1]);
                    },
             start: function( event, ui ) {
                       $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                      View.removeAllMarkers();
+                      // View.removeAllMarkers();
+
                    },
             stop: function( event, ui ) {
 
-                    // View.clearTasksInSliderView();
-                    $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] ); 
-                        // var tasksInRange = Model.getNumberOfTasksInRange(ui.values[0],ui.values[1]);           
-                        // View.showTasksInRange(tasksInRange);
+                      $( "#stopvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 
-                        View.showTaskListing(ui.values[0],ui.values[1]);
-                        View.createMultipleMarkers(ui.values[0],ui.values[1],'mapSummaryDiv');
+                      View.showTaskListing(ui.values[0],ui.values[1]);
+                      View.createMultipleMarkers(ui.values[0],ui.values[1],mapCreated);
+                      View.filterMarkers(ui.values[0],ui.values[1]);
 
 
                         // var marker; //no value of markers here.
