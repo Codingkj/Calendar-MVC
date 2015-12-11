@@ -7,11 +7,9 @@ var ViewEvents = (function () {
         console.log("this event is",clickEvent);
         console.log("just Event",event);
         var dateSelected = clickEvent.target.textContent;
-        Model.setDateSelected(dateSelected);
-        
+        Model.setDateSelected(dateSelected);  
 
-        var taskEntry = Model.getExistingTask(dateSelected); 
-       
+        var taskEntry = Model.getExistingTask(dateSelected);    
         var formToChange = View.chooseAFormToDisplay(taskEntry);
       
         var currentMonth = Utilities.getCurrentMonthNumber();
@@ -23,17 +21,16 @@ var ViewEvents = (function () {
           if  (!taskEntryFormShown) {
             View.setMapOnForm(formToChange);
             taskEntryFormShown = true;
-        }   
-      }
+            }   
+          }
         if (formToChange === 'divTaskEditForm')  { 
           if(!taskEditFormShown) {
             View.setMapOnForm(formToChange);
             taskEditFormShown = true;
-        }   
-      }
+            }   
+          }
   
-        var taskTextOnDate = Model.getExistingTask(dateSelected);
-        View.displayTaskText(taskTextOnDate);
+        View.displayTaskText(taskEntry);
         View.highlightDate(dateSelected);
         return dateSelected;
         }   
@@ -110,19 +107,18 @@ var ViewEvents = (function () {
         console.log("got here too!!!!"); 
         View.createTaskListing();
         View.showTaskListing(1,31);
-        // View.displayStarterMap(51.4996829,-0.0845579);
-        var map = View.showMapView();
         
-        
-        var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
-        // View.createSlider(sliderWidth);
+        var mapCreated = View.showMapView();   
+        var currentMonthNumber = Utilities.getCurrentMonthNumber();
+        var daysInMonth = Utilities.getDatesInCurrentMonth(2015,currentMonthNumber);
+        View.createMultipleMarkers(1,daysInMonth,mapCreated);
 
         $ (function() {
         $("#slider-range").slider({
           range: true,
           min: 1,
           max: 31,       
-          values:[1,20], 
+          values:[1,31], 
           step:1,
             slide: function( event, ui ) {
                       $( "#slidevalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] + ' '+ currentMonthName);
@@ -130,7 +126,7 @@ var ViewEvents = (function () {
                    },
             start: function( event, ui ) {
                       $( "#startvalue" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                      
+                      View.removeAllMarkers();
                    },
             stop: function( event, ui ) {
 
@@ -140,7 +136,8 @@ var ViewEvents = (function () {
                         // View.showTasksInRange(tasksInRange);
 
                         View.showTaskListing(ui.values[0],ui.values[1]);
-                        View.createMultipleMarkers(ui.values[0],ui.values[1],map);
+                        View.createMultipleMarkers(ui.values[0],ui.values[1],'mapSummaryDiv');
+
 
                         // var marker; //no value of markers here.
                         // var infowindow = new google.maps.InfoWindow();
@@ -166,7 +163,6 @@ var ViewEvents = (function () {
   return {
     cancelTaskEntry:cancelTaskEntry,
     closeEditForm:closeEditForm,
-   
     findPostcode:findPostcode,
     removeTask:removeTask,
     returnToCalendarScreen:returnToCalendarScreen,

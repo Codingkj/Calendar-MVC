@@ -27,13 +27,28 @@ var Model = (function () {
     console.log("stored locations are now",locationsArray);
   }
 
+  function storeMarker(dateSelected,marker){
+    mapMarkers.date = dateSelected;
+    mapMarkers.marker = marker;
+    console.log("I'm storing marker for day ",dateSelected);
+  }
+
   function storeTaskEntry(taskText,dateSelected){
     taskEntries[dateSelected] = taskText;
-    console.log("TaskEntries are now",taskEntries);
+    
   }
 
   function removeTaskEntry(dateSelected){
     taskEntries[dateSelected] = "";
+  }
+
+  function removeMarkersFromStorage(){
+//     var allMarkers = mapMarkers;
+//     $.each(allMarkers,function(index) {
+//     Model.storeMarker(dateSelected,null);
+//   }
+// }
+    mapMarkers = {};
   }
 
   function setDateSelected(dateSelected){
@@ -43,6 +58,10 @@ var Model = (function () {
 
   function getDateSelected(){
     return currentdateSelected;
+  }
+
+  function getMarkers(){
+    return mapMarkers;
   }
 
   function getStartCell(currentMonthName){
@@ -64,35 +83,19 @@ var Model = (function () {
     return NUMBER_OF_COLUMNS;
   }
 
-  function setTask(date,taskText){
-    taskEntries[date] = taskText;
-  }
-
   function getExistingTask(dateSelected){    
     return taskEntries[dateSelected];
   }
 
   function getExistingLocation(dateSelected){
     {
-      console.log("dateSelected in getexisting location",dateSelected);
-      console.log("locations array is currently...",locationsArray);
       var coords = [locationsArray[dateSelected][0],locationsArray[dateSelected][1]];
-
       return coords;
     }
   }
 
   function createWeekdayLabelCells(gridElement){
 
-    // var $tableRow = $('<tr>');
-    // for (var counter=0;counter<DAY_NAMES.length;counter++) {        
-    //         var $cell = $('<td class="firstrow">');
-    //         $tableRow.append($cell); 
-    //         console.log ("this is",counter);
-    //         console.log("$cell is",$tableRow);  
-    
-    //         gridElement.append($tableRow);
-        // }
      $.each(DAY_NAMES, function (index) {
         if (!(index % NUMBER_OF_COLUMNS)) {
             tableRow = $('<tr>');
@@ -163,6 +166,7 @@ var Model = (function () {
     clearTaskText:clearTaskText,
     createWeekdayLabelCells:createWeekdayLabelCells,
     getColumns:getColumns,
+    getMarkers:getMarkers,
     getWeekdayLabels:getWeekdayLabels,
     getWeekdayCells:getWeekdayCells,
     getExistingTask:getExistingTask,
@@ -172,11 +176,12 @@ var Model = (function () {
     getDateSelected:getDateSelected,
     getStartCell:getStartCell,
     removeTaskEntry:removeTaskEntry,
-    setTask:setTask,
+    removeMarkersFromStorage:removeMarkersFromStorage,
     setDateSelected:setDateSelected,
     setBlanksAtStartOfMonth:setBlanksAtStartOfMonth,
     setNumbersToRestOfMonth:setNumbersToRestOfMonth,
     storeCoordsForLocation:storeCoordsForLocation,
+    storeMarker:storeMarker,
     storeTaskEntry:storeTaskEntry,
   };
   

@@ -26,25 +26,6 @@ var Utilities = (function () {
     return today;
   }
 
-  // function createGoogleMap(latitude,longitude,mapContainer){
-  //       console.log("data received, lat, long, mapContainer",latitude, longitude,mapContainer);
-
-  //       var divIwant=document.getElementById('mapTaskEntry');
-  //       console.log("div i want",divIwant);
-     
-  //       var map = new google.maps.Map(document.getElementById('mapTaskEntry'),{
-  //         zoom:12,
-  //         center:new google.maps.LatLng(latitude,longitude)});
-
-  //       var marker = new google.maps.Marker({
-  //                   position:{lat: longitude, lng: longitude},
-  //                   map: map,
-  //                   title: 'Your task is here!',
-  //                  });  
-  // }
-
-
-// mapSummaryDiv
 
   function createGoogleMap(latitude,longitude,mapContainer){
      
@@ -55,7 +36,7 @@ var Utilities = (function () {
             zoom:12   };
     
       var map = new google.maps.Map(document.getElementById(mapContainer),mapOptions);
-      
+
       google.maps.event.trigger(document.getElementById(mapContainer), 'resize');
       console.log('map is...',map);
     return map;
@@ -70,9 +51,16 @@ var Utilities = (function () {
                             map: map,
                             title: 'Your task is here!',
                           });
-      console.log('leaving mapmarker now..');
+      console.log('Utilities mapmarker now..');
       return marker; 
     }
+
+  function removeMarkersFromMap(mapMarkers){
+    console.log("Got to Utilities remove markers");
+    // $.each(mapMarkers,function(index) {
+    //   mapMarkers[index].setMap(null);
+    // });
+  }
 
   function validateTaskEntry(taskText){
     if (taskText===""){
@@ -89,6 +77,7 @@ var Utilities = (function () {
     findTodaysDate:findTodaysDate,
     createGoogleMap:createGoogleMap,
     createMapMarker:createMapMarker,
+    removeMarkersFromMap:removeMarkersFromMap,
     validateTaskEntry:validateTaskEntry
   };
   
