@@ -1,5 +1,7 @@
 var View = (function () {
   
+    var starterMarkerIsOn = true;
+
     function changeFormToVisible(formToChange){
     var $changeform = $('#'+ formToChange);
     $changeform.addClass('visible').removeClass('hidden');    
@@ -97,6 +99,7 @@ var View = (function () {
                  return;
             }  
             var data = JSON.parse(xhr.responseText);
+
             var latitudeReturnedFromLookup= data.result.latitude;
             var longitudeReturnedFromLookup= data.result.longitude;
 
@@ -106,11 +109,12 @@ var View = (function () {
             var markerCreated = Utilities.createMapMarker(latitudeReturnedFromLookup, longitudeReturnedFromLookup ,mapCreated); 
             Model.storeMarker(dateSelected, markerCreated);
             Model.storeCoordsForLocation(dateSelected,latitudeReturnedFromLookup,longitudeReturnedFromLookup); 
+            
         }   
         
         xhr.send();
         
-        // return {};
+      
        
       }
 
@@ -272,9 +276,16 @@ var View = (function () {
     marker = Model.getStarterMarker();
     console.log(marker);
     marker.setMap(null);   
-    Model.removeStarterMarker(marker);
+    if (starterMarkerIsOn) {
+      Model.removeStarterMarker(marker);
+      starterMarker = false;
     }
+  }
 
+  function showStartMarker(mapContainer){
+    marker = Model.getStarterMarker();
+    marker.setMap(mapContainer);
+  }
 
     // function onSliderMove( event, ui ) {
     //       var currentMonthName = Utilities.getMonthName(Utilities.getCurrentMonthNumber());
@@ -321,6 +332,7 @@ var View = (function () {
     setArrayValuesToTablePosition:setArrayValuesToTablePosition,
     showPostcodeCoordinates:showPostcodeCoordinates,
     showMapView:showMapView,
+    showStartMarker:showStartMarker,
     showTaskListing:showTaskListing,
     unHighlightDate:unHighlightDate
   };
